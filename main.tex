@@ -1,0 +1,2212 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,array,enumitem,longtable,fancyvrb}
+\fvset{fontsize=\footnotesize}
+\allowdisplaybreaks
+\setlength{\emergencystretch}{2em}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{microtype}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\T}{\mathbb T}
+\newcommand{\C}{\mathbb C}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\ran}{\operatorname{ran}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\J}{\mathcal J}
+\newcommand{\Op}{\mathrm{op}}
+\newcommand{\cert}{\texttt{Sidon5\_Exact\_Closure\_Certificate\_Revised.py}}
+\newcommand{\certsix}{\texttt{Sidon6\_7\_Exact\_Closure\_Certificate.py}}
+\DeclareMathOperator{\Rea}{Re}
+\DeclareMathOperator{\Ima}{Im}
+
+
+
+\title{\textbf{Exact Sidon Constants in Degrees Five, Six and Seven and Strict Monotonicity in Every Degree}}
+\author{Zixuan Ye \and GPT-6 Sol \and GPT-6.1 Sol}
+\date{24 October 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+For complex polynomials with consecutive frequencies, we identify $S_5,S_6,S_7$
+by primitive integer minimal polynomials of degrees $4,372,855$ and explicit
+rational intervals containing exactly one root. We also prove analytically
+that $S_{n+1}>S_n$ for every $n\ge1$. The individual exact closures combine
+complementary-polynomial feasibility, locally sharp Toeplitz bounds,
+complete finite phase covers, rational charts and exact rational-univariate
+identities. We give the analytic implications and verifier pseudocode in the
+paper; independent programs recheck all finite predicates. The degree-seven
+minimal polynomial has splitting-field Galois group $\mathfrak S_{855}$.
+\end{abstract}
+\tableofcontents
+
+
+\section{Introduction and main results}
+For the consecutive spectrum $E_n=\{0,\ldots,n\}$, define its Fourier-analytic
+Sidon constant by
+\begin{equation}\label{eq:sidon-definition}
+ S_n=\max\left\{\J(P):P(z)=\sum_{k=0}^na_kz^k,\quad
+ \|P\|_\T\le1\right\},\qquad \J(P)=\sum_{k=0}^n|a_k|.
+\end{equation}
+Here $\|P\|_\T=\max_{|z|=1}|P(z)|$; we also write
+$\|P\|_\infty$ for this norm. The coefficients are unrestricted complex
+numbers. Parseval bounds the coefficient vectors of the feasible set,
+which is closed, so the maximum exists. Degree means ``at most''
+throughout this paper.
+
+Small consecutive spectra already present a difficult exact optimization
+problem. Neuwirth's lecture manuscript discusses the classical
+Newman--Shapiro bound $S_n\le\sqrt n$ for $n\ge1$, including equality in
+degrees $1,2,4$, and the degree-three problem \cite{Neuwirth2026}.
+Yu, Deepseek and Claude Code subsequently reported $S_3=5/3$ and a Lean
+formalization \cite{Yu2026}. We cite that preprint for its stated result;
+our proofs and certificates do not depend on its formalization.
+
+The present work determines three further constants as individual algebraic
+numbers. Here and below, the integer minimal polynomial means the unique
+primitive polynomial in $\mathbb Z[X]$ with positive leading coefficient
+associated with the monic minimal polynomial over $\mathbb Q$.
+
+\begin{theorem}[Exact closure of $S_5$]\label{thm:main}
+The integer minimal polynomial of $S_5$ is
+\begin{equation}\label{eq:Lambda-polynomial}
+ h_5(X)=675X^4-1026X^3-936X^2-414X+677.
+\end{equation}
+It has exactly one root in $I_5=(218/100,219/100)$, and that root is $S_5$.
+In particular, $[\mathbb Q(S_5):\mathbb Q]=4$ and
+$S_5=2.186529771892569\ldots$. A real extremizer is given explicitly in
+Section~\ref{sec:five}; the upper bound holds for all complex coefficients.
+\end{theorem}
+
+\begin{theorem}[Exact closure of $S_6$]\label{thm:main6}
+The constant $S_6$ is the unique root in
+\begin{equation}\label{eq:I6}
+ I_6=\left(\frac{2362563342647160829}{10^{18}},
+                \frac{2362563342647160830}{10^{18}}\right)
+\end{equation}
+of the primitive integer polynomial $h_6$ supplied in
+\texttt{S6\_S7\_Minimal\_Polynomials.txt}. This polynomial is irreducible,
+has degree $372$, and equals $H_6(X^2)$ with $\deg H_6=186$.
+Thus $[\mathbb Q(S_6):\mathbb Q]=372$ and
+$[\mathbb Q(S_6^2):\mathbb Q]=186$.
+\end{theorem}
+
+\begin{theorem}[Exact closure of $S_7$]\label{thm:main7}
+The constant $S_7$ is the unique root in
+\begin{equation}\label{eq:I7}
+ I_7=\left(\frac{2551658061766431151}{10^{18}},
+                \frac{2551658061766431152}{10^{18}}\right)
+\end{equation}
+of the primitive integer polynomial $h_7$ supplied in the same text file.
+The polynomial is irreducible of degree $855$. Consequently
+$[\mathbb Q(S_7):\mathbb Q]=[\mathbb Q(S_7^2):\mathbb Q]=855$.
+\end{theorem}
+
+\begin{theorem}[Strict growth]\label{thm:monotonicity}
+One has $S_0=S_1=1$, and
+\begin{equation}\label{eq:strictgrowth}
+ S_{n+1}>S_n\qquad(n\ge1).
+\end{equation}
+This assertion has a purely analytic proof, independent of the finite
+certificates for the three individual constants.
+\end{theorem}
+
+The decimal enclosures in \eqref{eq:I6}--\eqref{eq:I7} are rational open
+intervals of width $10^{-18}$. The long coefficient lists of $h_6,h_7$ are
+the only polynomial displays deferred to the separate text file. Its
+unambiguous coefficient convention is
+$h_n(X)=\sum_{j=0}^{\deg h_n}c_{n,j}X^j$, with all integer coefficients
+listed in increasing order, including zeros. The certificate compares these
+lists with the defining rational-univariate data coefficient by coefficient.
+
+\paragraph{Proof architecture and relation to previous methods.}
+The argument has three independent obligations. First, a complementary
+polynomial proves feasibility and positive Toeplitz moments give a sharp
+\emph{global} upper bound after a complete phase cover. Second, a rational
+chart and a contracting six-variable box identify that unrestricted global
+extremizer with a specified real branch of a rational univariate
+representation (RUR). Third, integer identities, rational root isolation
+and irreducibility turn an annihilating polynomial into a minimal polynomial.
+None of the latter two obligations is discharged by a small floating-point
+residual or by a multivariate isolation box alone.
+
+The analytic tools have established antecedents. Scalar Fej\'er--Riesz
+factorization and its operator extensions are surveyed in
+\cite{DritschelRovnyak}; the matrix-product charts below are a symmetric
+paraunitary specialization related to quantum signal processing
+\cite{Haah2019}. RUR methods originate well before this work
+\cite{Rouillier1999}. We prove the particular inverse formulas and
+root-identification statements needed here. The local Taylor--Schur
+certificates complement global trigonometric optimization approaches such
+as \cite{BachRudi2023}; that work is background, not an external optimality
+certificate for our candidates. Irreducibility is verified with finite-field
+Frobenius tests of the type introduced by Rabin \cite{Rabin1980}.
+
+The proof programs have two arithmetic layers. The complete phase covers
+and the degree-five field computations use Python's standard-library
+integer arithmetic. The new univariate and RUR checks use exact FLINT
+integer polynomials and outward-rounded Arb balls through
+\texttt{python-flint}; see \cite{Johansson2017}. SymPy constructs exact
+rational expressions. Neither an optimizer, a stored success flag, nor an
+external system solver is trusted by the verifier. Appendix~\ref{app:driver}
+gives the full execution interface and mathematical pseudocode.
+
+\section{Complementary factors and strict monotonicity}\label{sec:monotone}
+We record the scalar factorization in the form used in both the analytic
+and computer-assisted parts of the paper.
+
+\begin{lemma}[Scalar complementary factor]\label{lem:FR}
+If $P$ has degree at most $n$ and $\|P\|_\T\le1$, there is a polynomial
+$Q$ of degree at most $n$ with $|P|^2+|Q|^2=1$ on $\T$.
+If $|P|$ is not identically one, $Q$ can be chosen to have degree exactly
+$n$ and nonzero leading coefficient.
+\end{lemma}
+\begin{proof}
+Put $D(z)=1-P(z)\overline{P(1/\bar z)}$. If it vanishes identically take
+$Q=0$. Otherwise let $d$ be its actual Laurent degree. For $d=0$ the
+assertion is immediate. For $d>0$, $z^dD(z)$ has degree $2d$ with
+nonzero constant and leading terms. Its zeros off $\T$ occur in pairs
+$\alpha,1/\bar\alpha$ with equal multiplicities. A zero on $\T$ has
+even multiplicity: the real-analytic function $D(e^{it})\ge0$ cannot
+change sign at its zero. Select one zero from each off-circle pair and
+half the multiplicity of every circle zero to form a degree-$d$
+polynomial $q$. Comparing zeros gives $D=c|q|^2$ on $\T$, with $c>0$
+by evaluation at a point where $D>0$. Absorb $\sqrt c$ in $q$.
+Finally, $Q=z^{n-d}q$ leaves its modulus unchanged and has degree $n$.
+\end{proof}
+
+\begin{lemma}[A degree-raising perturbation]\label{lem:degree-raise}
+Let $P$ be a nonmonomial polynomial of degree at most $n$ with
+$\|P\|_\T=1$. There exists a polynomial $\widetilde P$ of degree at
+most $n+1$, with $\|\widetilde P\|_\T\le1$ and
+$\J(\widetilde P)>\J(P)$.
+\end{lemma}
+\begin{proof}
+A polynomial of constant modulus one on $\T$ is a monomial. Indeed, if
+its lowest and highest nonzero coefficients have indices $\ell<r$, the
+autocorrelation at lag $r-\ell$ equals $a_r\bar a_\ell\ne0$, contradicting
+constant modulus. Thus Lemma~\ref{lem:FR} gives a nonzero $Q$ of degree
+$n$, with leading coefficient $q_n\ne0$ and $|P|^2+|Q|^2=1$.
+
+For $0<\varepsilon<1$ and $|\eta|=1$, set
+\[
+ v=(\varepsilon,-\sqrt{1-\varepsilon^2}\,\bar\eta)^T,
+ \quad\Pi=vv^*,\quad E_\Pi(z)=I-\Pi+z\Pi.
+\]
+On $\T$, $E_\Pi$ is unitary, since $\Pi$ is an orthogonal projection.
+Its action on $(P,Q)^T$ therefore preserves the pointwise squared norm.
+The first component is the feasible polynomial
+\begin{equation}\label{eq:raiseperturb}
+ P_\varepsilon=(1-\varepsilon^2+\varepsilon^2z)P+
+ \varepsilon\sqrt{1-\varepsilon^2}\,\eta(1-z)Q.
+\end{equation}
+Write $R=(1-z)Q$, and append the coefficient $a_{n+1}=0$ to $P$.
+In the finite-dimensional coefficient space,
+$P_\varepsilon=P+\varepsilon\eta R+O(\varepsilon^2)$, whence
+\begin{equation}\label{eq:l1direction}
+ \left.\frac{d}{d\varepsilon}\right|_{0+}\J(P_\varepsilon)=
+ \Rea\left(\eta\sum_{a_k\ne0}
+                R_k\frac{\bar a_k}{|a_k|}\right)
+       +\sum_{a_k=0}|R_k|.
+\end{equation}
+This follows term by term from the directional derivative of the absolute
+value, including $|0+\varepsilon\eta R_k|$ at a zero coefficient.
+Choose $\eta$ so that the first real part is zero (any $\eta$ works if
+its sum is zero). The second sum is at least
+$|R_{n+1}|=|q_n|>0$. Hence $\J(P_\varepsilon)>\J(P)$ for sufficiently
+small positive $\varepsilon$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:monotonicity}]
+For degree one, the triangle inequality is attained by a suitable point
+of $\T$, so $\|a_0+a_1z\|_\T=|a_0|+|a_1|$; this also gives $S_0=S_1=1$.
+Every maximizer has norm one: $S_n\ge1$, and a nonzero maximizer of
+smaller norm could be rescaled to increase $\J$. For $n\ge1$ a
+nonmonomial maximizer can always be chosen. If $S_n>1$,
+every maximizer is nonmonomial. If $S_n=1$, the polynomial $(1+z)/2$
+is a nonmonomial maximizer. Apply Lemma~\ref{lem:degree-raise} to obtain
+$S_{n+1}>S_n$.
+\end{proof}
+
+\begin{proposition}[Algebraicity for every fixed degree]\label{prop:algebraicity}
+Each $S_n$ is real algebraic, and has an extremizer whose real and
+imaginary coefficient parts are real algebraic.
+\end{proposition}
+\begin{proof}
+Use Lemma~\ref{lem:FR} and equate coefficients in $|P|^2+|Q|^2=1$:
+\[
+ \sum_{k=0}^{n-h}(a_{k+h}\bar a_k+q_{k+h}\bar q_k)=\mathbf1_{h=0}
+ \quad(0\le h\le n).
+\]
+Add $\rho_k\ge0$, $\rho_k^2=|a_k|^2$. In real and imaginary parts this
+is a compact semialgebraic set over $\Q$; the zero-lag equation bounds
+every coordinate. Its image under $\sum\rho_k$ is a compact
+semialgebraic subset of $\R$ over $\Q$, whose rightmost endpoint is
+algebraic. Real-closed-field transfer supplies a real-algebraic point of
+the nonempty extremal fiber. This is an existence statement, not an
+efficient elimination algorithm.
+\end{proof}
+
+
+\section{Phase functionals and positive Toeplitz duality}\label{sec:Toeplitz}
+
+For a fixed degree $n$, and $b=(b_0,\ldots,b_n)\in\T^{n+1}$ and $P(z)=\sum a_kz^k$, define
+\begin{equation}\label{eq:phasefunctional}
+ \Phi_b(P)=b^Ta=\sum_{k=0}^nb_ka_k,\qquad
+ L(b)=\max_{\|P\|_\infty\le1}|\Phi_b(P)|,\qquad
+ R_b=\overline b\,b^T.
+\end{equation}
+Here $\T=\{z\in\C:|z|=1\}$, transpose $T$ does not mean conjugate transpose, and $R_b$ is the Hermitian matrix satisfying $a^*R_ba=|b^Ta|^2$. Since $\sum|a_k|=\max_{b\in\T^{n+1}}|b^Ta|$,
+\begin{equation}\label{eq:smax}
+ S_n=\max_{b\in\T^{n+1}}L(b).
+\end{equation}
+
+\begin{lemma}[Finite positive Toeplitz moments]\label{lem:moment}
+Suppose $T=(t_{k-j})_{j,k=0}^n$ is Hermitian Toeplitz and positive semidefinite. There exist finitely many $\zeta_l\in\T$ and $\mu_l\ge0$ such that
+\begin{equation}\label{eq:moment}
+ T_{jk}=\sum_l\mu_l\overline{\zeta_l}^{\,j}\zeta_l^k,
+ \qquad\sum_l\mu_l=t_0.
+\end{equation}
+Consequently, $a^*Ta\le t_0\|P\|_\infty^2$ for the coefficient vector $a$ of any polynomial of degree at most $n$.
+\end{lemma}
+\begin{proof}
+For $n=0$, take the single atom $\zeta_1=1$ of weight $t_0$.
+For $n\ge1$, choose Gram vectors $v_0,\ldots,v_n$ satisfying $\langle v_j,v_k\rangle=T_{jk}$, with the inner product linear in its second argument. Toeplitzness implies that $v_j\mapsto v_{j+1}$ is a well-defined isometry from $\operatorname{span}(v_0,\ldots,v_{n-1})$ onto $\operatorname{span}(v_1,\ldots,v_n)$: any linear relation is preserved, because the norms of corresponding linear combinations agree. The two subspaces have the same finite dimension. Extending this isometry by an arbitrary isometry between their orthogonal complements produces a unitary operator $U$ on $\operatorname{span}(v_0,\ldots,v_n)$. Then $v_j=U^jv_0$. The spectral decomposition of the finite-dimensional unitary $U$ gives spectral values $\zeta_l\in\T$ and orthogonal spectral projections $E_l$. Taking $\mu_l=\|E_lv_0\|^2$ proves \eqref{eq:moment}. In particular,
+$a^*Ta=\sum_l\mu_l|P(\zeta_l)|^2\le t_0\|P\|_\infty^2$.
+\end{proof}
+
+\begin{proposition}[Toeplitz domination]\label{prop:majorant}
+If $T$ is Hermitian Toeplitz and $T-R_b\succeq0$, then
+\begin{equation}\label{eq:majorant}
+ L(b)^2\le T_{00}.
+\end{equation}
+Moreover, $L(b)^2$ equals the minimum of $T_{00}$ over all such matrices $T$.
+\end{proposition}
+\begin{proof}
+Since $R_b\succeq0$, the hypothesis implies $T\succeq0$. By Lemma~\ref{lem:moment},
+$|\Phi_b(P)|^2=a^*R_ba\le a^*Ta\le T_{00}\|P\|_\infty^2$, proving \eqref{eq:majorant}.
+For the reverse equality, extend the coefficient functional $\Phi_b$ from the $(n+1)$-dimensional polynomial subspace of $C(\T)$ to $C(\T)$ without changing its norm, by complex Hahn--Banach. The Riesz representation theorem supplies a complex measure $\nu$ of total variation $L(b)$ representing this extension. Set
+$T_{jk}=L(b)\int_{\T}\overline z^{\,j}z^k\,d|\nu|(z)$. This matrix is Hermitian Toeplitz, with $T_{00}=L(b)^2$, and Cauchy--Schwarz for $|\nu|$ gives
+$|\Phi_b(P)|^2\le L(b)\int|P|^2d|\nu|=a^*Ta$. Thus $T-R_b\succeq0$. (The case $L(b)=0$ is immediate.)
+\end{proof}
+
+
+
+\subsection{The exact real-amplitude dual}\label{sec:realdual}
+
+For $n\ge1$, put $m=n+1$, and for $b\in\T^m$ let
+\[
+ \Phi_b(P)=\sum_{k=0}^n b_ka_k,\quad L_n(b)=\sup_{\|P\|_\T\le1}|\Phi_b(P)|,
+ \quad M_n(b)=\sup_{\substack{x\in\R^m\\\|\sum_{k=0}^n\bar b_kx_kz^k\|_\T\le1}}\biggl|\sum_{k=0}^n x_k\biggr|.
+\]
+Clearly $M_n(b)\le S_n$ and, by choosing $b_k=\bar a_k/|a_k|$ and $x_k=|a_k|$ (with an arbitrary phase for a zero coefficient), $\max_b M_n(b)=S_n$.  In particular, a sharp bound for $M_n$ in a neighborhood of a candidate phase is sufficient to control all \emph{aligned} extremizers in that neighborhood.
+
+\begin{theorem}[Exact real-amplitude Toeplitz duality]\label{thm:realdual}
+With $D_b=\diag(b_0,\ldots,b_n)$ and $\mathbf1=(1,\ldots,1)^T$, one has
+\begin{equation}\label{eq:realdual}
+ M_n(b)^2=\min\left\{T_{00}:\ T=T^*\succeq0\text{ is Toeplitz},\quad
+ \Rea(D_bTD_{\bar b})-\mathbf1\mathbf1^T\succeq0\ \text{on }\R^m\right\}.
+\end{equation}
+\end{theorem}
+\begin{proof}
+The finite positive Toeplitz moment representation established in Section~\ref{sec:Toeplitz} writes $T_{jk}=\int_\T\bar z^{\,j}z^k\,d\nu(z)$ with $\nu\ge0$ and $\nu(\T)=T_{00}$.  The matrix inequality in \eqref{eq:realdual}, tested on a real vector $x$, yields
+\[
+ |\mathbf1^Tx|^2\le x^T\Rea(D_bTD_{\bar b})x
+ =\int_\T\Bigl|\sum\bar b_kx_kz^k\Bigr|^2d\nu
+ \le T_{00}\Bigl\|\sum\bar b_kx_kz^k\Bigr\|_\T^2.
+\]
+For the opposite inequality, apply real Hahn--Banach to the real-linear functional $\sum x_k$ on the real subspace of polynomials $\sum\bar b_kx_kz^k$.  Extend it without changing its norm $M=M_n(b)$ to $C(\T;\C)$ considered as a real Banach space.  The real Riesz representation has the form $P\mapsto\Rea\int P\,d\mu$ for a complex measure of total variation $M$.  Cauchy--Schwarz shows
+\[
+ |\mathbf1^Tx|^2\le \Bigl|\int P\,d\mu\Bigr|^2
+ \le M\int |P|^2\,d|\mu|.
+\]
+The Toeplitz matrix of $M|\mu|$ has diagonal $M^2$, is positive, and obeys the required real matrix inequality.  When $M=0$, use $T=0$.
+\end{proof}
+
+The condition $T\succeq0$ must be retained: positivity of only the real matrix difference does not imply that $T$ is a positive Toeplitz moment matrix.  The certificates below avoid this trap by constructing $T$ directly from \emph{positive moving atoms}.  The complex majorant $T-\bar b b^T\succeq0$ continues to be useful away from the sharp candidate, where strictness can be purchased cheaply.
+
+
+
+\section{Degree five: an explicit quartic value and a global proof}\label{sec:five}
+
+Let $w$ be the unique real root in $(1/8,13/100)$ of
+\begin{equation}\label{eq:w-polynomial}
+ f(w)=16w^4+10w^3-8w+1=0.
+\end{equation}
+Define the six real numbers $p_0,\ldots,p_5$ by
+\begin{equation}\label{eq:coeff-table}
+ p_k=\frac{A_k+B_kw+C_kw^2+D_kw^3}{25875},
+\end{equation}
+where
+\begin{center}
+\begin{tabular}{c|rrrr}
+\toprule
+$k$ & $A_k$ & $B_k$ & $C_k$ & $D_k$\\\midrule
+0&3112&4752&9708&-9248\\
+1&9870&-6480&-28920&-12480\\
+2&13460&-4590&-34860&-31840\\
+3&7780&11880&24270&-23120\\
+4&-15705&-2430&32280&64320\\
+5&7358&-3132&-2478&12368\\\bottomrule
+\end{tabular}
+\end{center}
+Set $P_*(z)=\sum_{k=0}^5p_kz^k$ and
+\begin{equation}\label{eq:Lambda}
+\Lambda=\frac{3819+324w-4304w^2-8576w^3}{1725}.
+\end{equation}
+
+\begin{proposition}[An explicit extremizer and its full orbit]\label{thm:fivewitness}
+For every polynomial $P(z)=\sum_{k=0}^5a_kz^k$ with complex coefficients,
+\begin{equation}\label{eq:mainineq}
+ \sum_{k=0}^5|a_k|\le\Lambda\max_{|z|=1}|P(z)|,
+\end{equation}
+where
+\[
+ \Lambda=2.186529771892569\ldots
+\]
+is the unique root in $(2.18,2.19)$ of $h_5$ in \eqref{eq:Lambda-polynomial}.
+Equality for a nonzero polynomial holds if and only if, after normalizing its supremum norm to one, it has one of the forms
+\begin{equation}\label{eq:extremizer-orbit}
+\gamma P_*(\omega z),\qquad
+\gamma z^5P_*(\omega/z),\qquad |\gamma|=|\omega|=1.
+\end{equation}
+Consequently $S_5=S_5^{\R}=\Lambda$, where $S_5^{\R}$ denotes the analogous constant restricted to real coefficients.
+\end{proposition}
+
+
+\subsection{An exact algebraic extremizer}\label{sec:algebra}
+
+The polynomial \eqref{eq:w-polynomial} has opposite signs at $1/8$ and $13/100$. Its derivative $64w^3+30w^2-8$ is negative throughout this interval, hence $w$ is uniquely defined. The companion certificate uses rational bisection to enclose $w$ and checks that $p_0,p_1,p_2,p_3,p_5>0$ and $p_4<0$. Thus with
+\begin{equation}\label{eq:s-vector}
+ s=(1,1,1,1,-1,1)^T,
+\end{equation}
+we have $s^Tp=\sum|p_k|=\Lambda$. The program also verifies $P_*(1)=1$ and the quartic identity \eqref{eq:Lambda-polynomial}, by reduction modulo $f(w)$ in $\Q[w]$; uniqueness of the root in $(2.18,2.19)$ follows because the polynomial in \eqref{eq:Lambda-polynomial} is strictly increasing there and changes sign at the endpoints.
+
+Here is a direct unit-circle feasibility identity. Put
+\begin{equation}\label{eq:qcoefficients}
+ \eta=\frac{p_3-p_0}{p_5},\qquad \kappa=1-\eta,
+ \qquad Q_*(z)=\sqrt{p_0p_5}\,(1-\kappa z^2+\kappa z^3-z^5).
+\end{equation}
+The expressions are well-defined since $p_0p_5>0$. One has, for $h=0,\ldots,5$,
+\begin{equation}\label{eq:autocorr}
+ \sum_{k=0}^{5-h}\bigl(p_kp_{k+h}+q_kq_{k+h}\bigr)
+ =\begin{cases}1,&h=0,\\0,&h>0,\end{cases}
+\end{equation}
+where $Q_*(z)=\sum_{k=0}^5q_kz^k$. Indeed, $q_kq_j=p_0p_5v_kv_j$ with $v=(1,0,-\kappa,\kappa,0,-1)^T$; each of the six identities is an identity of rational functions of $w$, and the rational reductions in the certificate check them exactly, without any square-root approximations. Equating Fourier coefficients in \eqref{eq:autocorr} gives
+\begin{equation}\label{eq:complement}
+ |P_*(z)|^2+|Q_*(z)|^2=1\qquad(|z|=1).
+\end{equation}
+Therefore $\|P_*\|_\infty\le1$ and $\J(P_*)=\Lambda$. Since $P_*(1)=1$, its norm is exactly one. We have proved
+\begin{equation}\label{eq:lowerbound}
+ S_5\ge\Lambda.
+\end{equation}
+This explicit complementary-square factorization performs two tasks: it verifies primal feasibility and, through its autocorrelation identities, supplies the trace relation needed in the sharp local dual construction.
+
+\subsection{Normalized degree-five phases}
+We abbreviate $L_5(b)$ by $L(b)$ in this section.
+
+The symmetries
+\begin{equation}\label{eq:phase-sym}
+ b_k\mapsto\gamma\omega^k b_k,\quad
+ b\mapsto\overline b,\quad
+ (b_0,\ldots,b_5)\mapsto(b_5,\ldots,b_0),\qquad |\gamma|=|\omega|=1,
+\end{equation}
+preserve $L(b)$, by scalar multiplication, rotation of the variable, conjugation, and reversal of the polynomial. Choosing $\gamma$ and a fifth root $\omega$ allows $b_0=b_5=1$. We therefore parameterize all normalized phase classes by
+\begin{equation}\label{eq:theta}
+ b(\theta)=(1,e^{i\theta_1},e^{i\theta_2},e^{i\theta_3},e^{i\theta_4},1),
+ \qquad \theta\in(\R/2\pi\mathbb Z)^4.
+\end{equation}
+The normalized phases associated with the orbit of $P_*$ and its reversal are precisely the ten points
+\begin{equation}\label{eq:ten-centers}
+ (0,0,0,\pi)+\frac{2\pi r}{5}(1,2,3,4),\quad
+ (\pi,0,0,0)+\frac{2\pi r}{5}(1,2,3,4),\qquad 0\le r\le4,
+\end{equation}
+with angles taken modulo $2\pi$.
+
+\subsection{A locally sharp continuous Toeplitz certificate}\label{sec:local}
+
+This section proves an exact, not approximate, phase bound near each point in \eqref{eq:ten-centers}. Several small algebraic inequalities are discharged by the accompanying certificate, using fully specified matrices. We distinguish these inputs from the analytic perturbation argument.
+
+\subsubsection{The sharp base point and its nullspace}
+
+Let $p=(p_k)_{k=0}^5$, $q=(q_k)_{k=0}^5$, and $s$ be as in \eqref{eq:coeff-table}, \eqref{eq:qcoefficients}, and \eqref{eq:s-vector}. Write
+\begin{equation}\label{eq:proj}
+ N=[p\ q]\in\R^{6\times2},\qquad
+ \Pi=N(N^TN)^{-1}N^T.
+\end{equation}
+Thus $\Pi$ is the orthogonal projection onto $\operatorname{span}\{p,q\}$, provided $N^TN$ is invertible, as certified below. Define $t_0=\Lambda^2$ and $t_1,t_2$ by
+\begin{align}
+ At_1+Bt_2&=\Lambda-t_0\{p_0-\kappa p_3+(1-\kappa^2)p_5\},\label{eq:t12-a}\\
+ Ct_1+Dt_2&=\Lambda-t_0\{(1-\kappa^2)p_0-\kappa p_2+p_5\},\label{eq:t12-b}
+\end{align}
+where
+\begin{align*}
+ A&=p_1+\kappa p_3+\eta p_4+\kappa^2p_5,&B&=p_2+p_3+\kappa p_4,\\
+ C&=\kappa^2p_0+\eta p_1+\kappa p_2+p_4,&D&=\kappa p_1+p_2+p_3.
+\end{align*}
+Finally set
+\begin{equation}\label{eq:t345}
+ t_3=t_2-\kappa t_0+\kappa t_1,\qquad
+ t_4=\eta t_1+\kappa t_2,\qquad
+ t_5=(1-\kappa^2)t_0+\kappa^2t_1,
+\end{equation}
+and let $T_*=(t_{|j-k|})_{j,k=0}^5$. The determinant of the system \eqref{eq:t12-a}--\eqref{eq:t12-b} is nonzero; it is certified by rational interval arithmetic in $\Q(w)$.
+
+\begin{lemma}[Base-point algebraic certificate]\label{lem:base}
+With $S_0=T_*-ss^T$, one has
+\begin{equation}\label{eq:base-identities}
+ T_*p=\Lambda s,\qquad T_*q=0,\qquad
+ S_0N=0,\qquad S_0+5\Pi-4I_6\succ0.
+\end{equation}
+Consequently $S_0\succeq0$, $\ker S_0=\ran N$, and its restriction to $(\ran N)^\perp$ is strictly greater than $4I$.
+\end{lemma}
+\begin{proof}
+The first two identities reduce to exact identities in $\Q(w)$ after using \eqref{eq:t12-a}--\eqref{eq:t345}; the quartic-field part of the certificate checks all twelve components. Moreover $s^Tp=\Lambda$ and $s^Tq=0$, so these identities imply $S_0N=0$. The certificate checks $N^TN\succ0$ and the last matrix inequality in \eqref{eq:base-identities} by outward rational intervals and positive $LDL^T$ pivots. Since $S_0$ is symmetric, it preserves the decomposition $\ran N\oplus(\ran N)^\perp$. On the first summand it is zero, while on the second $\Pi=0$ and the last inequality gives $S_0>4I$. This proves all claims.
+\end{proof}
+
+In particular, $T_*-R_s\succeq0$ is a sharp dual certificate for $\Phi_s$, because $\Phi_s(P_*)=\Lambda$ and $(T_*)_{00}=\Lambda^2$. The matrix $S_0$ has an unavoidable two-dimensional nullspace. Put
+\begin{equation}\label{eq:G}
+ G=(S_0+\Pi)^{-1}-\Pi.
+\end{equation}
+Then $G$ is the inverse of $S_0$ on $(\ran N)^\perp$, extended by zero on $\ran N$, and $\|G\|_\Op<1/4$. By \eqref{eq:autocorr} at $h=0$, $\|N\|_\Op\le\|N\|_F=1$.
+
+\subsubsection{First-order correction and a strict quadratic form}
+
+Let $\theta_0=\theta_5=0$ and $\|\theta\|_2\le1/125$. Put $x_i=\sin\theta_i$ for $1\le i\le4$, $r=\|x\|_2$, and $\widehat x=(0,x_1,\ldots,x_4,0)^T$. We write $u\odot v$ for componentwise multiplication and define
+\begin{equation}\label{eq:R123}
+ v=s\odot\widehat x,\qquad w_2=s\odot\widehat x^{\,2},\qquad
+ R_1=sv^T-vs^T,\qquad
+ R_2=vv^T-\tfrac12(sw_2^T+w_2s^T).
+\end{equation}
+The power $\widehat x^{\,2}$ is componentwise. Let $J_h$ ($1\le h\le5$) be the real skew-symmetric Toeplitz matrix with $+1$ on the $h$th upper diagonal and $-1$ on the $h$th lower diagonal. Let $E_h$ be the real symmetric Toeplitz matrix with $+1$ on both such diagonals and zero elsewhere.
+
+For each $x$, choose the unique $A_1(x)=\sum_{h=1}^5\alpha_h(x)J_h$ minimizing
+\begin{equation}\label{eq:A1-min}
+ \tr\bigl(((A_1-R_1)N)^TG((A_1-R_1)N)\bigr)
+\end{equation}
+subject to
+\begin{equation}\label{eq:A1-constraint}
+ p^T(A_1-R_1)q=0.
+\end{equation}
+The five coefficients are linear in $x$. Indeed, the objective in
+\eqref{eq:A1-min} is a nonnegative quadratic form, and the bordered
+Karush--Kuhn--Tucker system below is nonsingular by a certified exact
+interval test. Its solution is the unique constrained minimizer: any other
+minimizer would give a nonzero vector in the kernel of this bordered system
+by subtracting the two stationary equations. For an explicit, reproducible
+definition, put
+\begin{equation}\label{eq:M-c}
+ c_h=p^TJ_hq,\qquad
+ M_{h\ell}=\tr\bigl((J_hN)^TG(J_\ell N)\bigr),\qquad
+ \mathcal B=\begin{pmatrix}M&c\\c^T&0\end{pmatrix}.
+\end{equation}
+For $v=s\odot\widehat x$, let $r_h(x)=\tr((J_hN)^TG(R_1N))$ and $d(x)=p^TR_1q=\Lambda v^Tq$. Then $\binom{\alpha(x)}{\tau(x)}=\mathcal B^{-1}\binom{r(x)}{d(x)}$ are precisely the constrained normal equations; $\mathcal B$ is verified invertible by the certificate. Define $K(x)=A_1(x)-R_1$, and write
+\begin{equation}\label{eq:Ki}
+ K(x)=\sum_{i=1}^4x_iK_i.
+\end{equation}
+As $K$ is skew-symmetric, $N^TKN=0$ follows from \eqref{eq:A1-constraint}.
+
+Define the real symmetric $4\times4$ matrix $H$ by its quadratic form
+\begin{equation}\label{eq:H}
+ x^THx=\Lambda\sum_{i=1}^4|p_i|x_i^2
+ -(p^Tv)^2-(q^Tv)^2
+ -\tr\bigl((KN)^TG(KN)\bigr).
+\end{equation}
+This is the decisive nondegeneracy condition. The certificate verifies, by outward rational intervals,
+\begin{equation}\label{eq:first-checked}
+ H\succ\frac3{25}I_4,\qquad \sum_{i=1}^4\|K_i\|_F^2<100.
+\end{equation}
+It follows from Cauchy--Schwarz that $\|K(x)\|_\Op\le10r$.
+
+\subsubsection{Second- and third-order corrections}
+
+Let $T_2(x)=\sum_{h=1}^5\beta_h(x)E_h$ be the real symmetric Toeplitz matrix with zero diagonal satisfying
+\begin{equation}\label{eq:T2}
+ N^T(T_2-R_2)N=(KN)^TG(KN)+\tfrac12(x^THx)I_2.
+\end{equation}
+We specify it uniquely by requiring $\beta$ to be the minimum Euclidean-norm solution of the $(1,1)$ and $(1,2)$ entries of \eqref{eq:T2}. Concretely, let
+\begin{equation}\label{eq:F}
+ F=\begin{pmatrix}(p^TE_hp)_{h=1}^5\\(p^TE_hq)_{h=1}^5\end{pmatrix};
+\end{equation}
+Define
+\[
+ D_2=N^TR_2N+(KN)^TG(KN)+\tfrac12(x^THx)I_2,
+ \qquad d_2=\bigl((D_2)_{11},(D_2)_{12}\bigr)^T.
+\]
+Then $\beta=F^T(FF^T)^{-1}d_2$; the certificate checks
+$FF^T\succ0$. In particular, this definition uses only the already
+specified algebraic data, and no free choice of a second-order correction
+remains.
+
+It is important that the third entry in the $2\times2$ symmetric equation is not an extra assumption. From \eqref{eq:autocorr}, for every zero-diagonal real symmetric Toeplitz matrix $U$,
+\begin{equation}\label{eq:trace-zero}
+ p^TUp+q^TUq=0.
+\end{equation}
+On the other hand, \eqref{eq:H} and $s^Tp=\Lambda$, $s^Tq=0$ show
+\begin{equation}\label{eq:trace-compat}
+ \tr\left[N^TR_2N+(KN)^TG(KN)+\tfrac12(x^THx)I_2\right]=0.
+\end{equation}
+Thus the $(2,2)$ entry follows from the other two, and \eqref{eq:T2} is consistent. Write
+\begin{equation}\label{eq:S2}
+ S_2(x)=T_2(x)-R_2(x)=\sum_{i,j=1}^4x_ix_jS_{ij},\qquad S_{ij}=S_{ji}.
+\end{equation}
+The program certifies
+\begin{equation}\label{eq:S2-bound}
+ \sum_{i,j=1}^4\|S_{ij}\|_F^2<289,
+ \qquad\text{hence}\qquad\|S_2(x)\|_\Op\le17r^2.
+\end{equation}
+
+For the cubic correction set $e_2=-w_2/2$ and
+\begin{equation}\label{eq:R3}
+ R_3=e_2v^T-ve_2^T.
+\end{equation}
+Let
+\begin{equation}\label{eq:Jstar}
+ J_*=\frac{\sum_{h=1}^5c_hJ_h}{\sum_{h=1}^5c_h^2},
+ \qquad p^TJ_*q=1,
+\end{equation}
+where $c_h$ are as in \eqref{eq:M-c}; the denominator is positive by the invertibility checks. Define
+\begin{equation}\label{eq:A3}
+ \gamma_3(x)=p^T\bigl(R_3+KGS_2+S_2GK+KGKGK\bigr)q,
+ \qquad A_3(x)=\gamma_3(x)J_*,\qquad K_3=A_3-R_3.
+\end{equation}
+All matrix products are ordinary finite products. By skew-symmetry, the matrix
+\begin{equation}\label{eq:cubic-cancel}
+ N^T\bigl(K_3-KGS_2-S_2GK-KGKGK\bigr)N
+\end{equation}
+is real skew-symmetric; its only independent entry, the $(1,2)$ entry, vanishes by \eqref{eq:A3}. Hence \eqref{eq:cubic-cancel} is identically zero. The certificate obtains the homogeneous symmetric tensor $K_3(x)=\sum_{i,j,k}x_ix_jx_kC_{ijk}$ by polarization and verifies
+\begin{equation}\label{eq:K3-bound}
+ \sum_{i,j,k=1}^4\|C_{ijk}\|_F^2<16,
+ \qquad\text{hence}\qquad\|K_3(x)\|_\Op\le4r^3.
+\end{equation}
+
+\subsubsection{Schur complement and explicit remainder}
+
+Let
+\begin{equation}\label{eq:Ttheta}
+ T(x)=T_*+iA_1(x)+T_2(x)+iA_3(x).
+\end{equation}
+Each correction is Hermitian Toeplitz (because $i$ times a real skew-symmetric Toeplitz matrix is Hermitian), and each has zero diagonal, so $T(x)_{00}=\Lambda^2$.
+
+For $b=s\odot e^{i\theta}$, the exact identities
+\[
+ \cos\theta_j-1=-\frac{x_j^2}{1+\cos\theta_j},\qquad
+ \cos\theta_j-1+\frac{x_j^2}{2}
+ =-\frac{x_j^4}{2(1+\cos\theta_j)^2}
+\]
+show that
+\begin{equation}\label{eq:R-expand}
+ R_b=ss^T+iR_1+R_2+iR_3+\Delta,
+ \qquad\|\Delta\|_\Op\le4r^4
+\end{equation}
+for $r\le1/125$. Here is an explicit remainder calculation. Set
+$u=-w_2/2$ and
+$e=s\odot(\cos\theta-\mathbf1+\widehat x^{\,2}/2)$,
+where $\cos\theta$ has entries $1$ at indices $0,5$.
+Since $\cos\theta_j>1/2$ and $\sum_jx_j^8\le
+(\sum_jx_j^2)^4=r^8$, the second displayed identity gives
+\[
+ \|u\|_2\le r^2/2,\qquad
+ \|e\|_2\le r^4/4,\qquad
+ \|v\|_2\le r,\qquad \|s\|_2=\sqrt6.
+\]
+Now $b=s+u+e+iv$ and $\overline b=s+u+e-iv$, so the
+contributions through total degree three are exactly those displayed
+in $R_1,R_2,R_3$. The remaining terms are
+\[
+ \Delta=uu^T+(s+u-iv)e^T+e(s+u+iv)^T+ee^T.
+\]
+The rank-one operator-norm identity $\|ab^T\|_\Op=\|a\|_2\|b\|_2$
+therefore yields
+\[
+ \|\Delta\|_\Op
+ \le \frac{r^4}{4}
+ +2\bigl(\sqrt6+r+r^2/2\bigr)\frac{r^4}{4}
+ +\frac{r^8}{16}<4r^4
+ \qquad(0<r\le1/125).
+\]
+At $r=0$ the remainder is zero, so \eqref{eq:R-expand} holds
+throughout the stated ball.
+
+Consequently
+\begin{equation}\label{eq:Schur-matrix}
+ T(x)-R_b=S_0+iK+S_2+iK_3-\Delta.
+\end{equation}
+We analyze this Hermitian matrix relative to the orthogonal decomposition $\ran N\oplus(\ran N)^\perp$. Let
+\begin{equation}\label{eq:error-def}
+ h(r)=17r^2+4r^3+4r^4,\quad
+ e(r)=10r+h(r),\quad g(r)=4r^3+4r^4.
+\end{equation}
+By Lemma~\ref{lem:base} and \eqref{eq:first-checked}--\eqref{eq:R-expand}, the lower-right (range) block is bounded below by $(4-e(r))I$. Its inverse has norm at most $1/(4-e(r))$. Two applications of the resolvent identity, expanding around the inverse $G$ of $S_0$ and retaining the constant and linear terms, bound the residual inverse by
+\begin{equation}\label{eq:resolvent}
+ \frac{h(r)}{16}+\frac{e(r)^2}{16(4-e(r))}.
+\end{equation}
+Indeed, if $D$ is the range perturbation with $\|D\|\le e(r)$ and $D_1$ its linear term with $\|D-D_1\|\le h(r)$, the identity
+\[
+ (S_0+D)^{-1}=G-GDG+GDG D(S_0+D)^{-1}
+\]
+on the range gives \eqref{eq:resolvent}, using $\|G\|\le1/4$ and replacing $D$ by $D_1$ in the first-order term.
+
+To make the Schur remainder exhaustive, write
+\[
+ A=iK,\quad S=S_2,\quad Z=iK_3-\Delta,\quad
+ B=A+S+Z,\quad V=S+Z.
+\]
+Then $\|A\|\le10r$, $\|Z\|\le g(r)$,
+$\|V\|\le h(r)$, and $\|B\|\le e(r)$.
+Let $\mathsf P=I_6-\Pi$ be the orthogonal projection onto
+$\operatorname{ran}(N)^\perp$. The range-block perturbation is
+$D=\mathsf P B\mathsf P$ (restricted to that range), and its
+linear part is $D_1=\mathsf P A\mathsf P$. With $G$ viewed as zero
+on $\operatorname{ran}(N)$, write
+\[
+ (S_0|_{\ran\mathsf P}+D)^{-1}
+   =G-GD_1G+\mathcal R,
+ \qquad
+ \|\mathcal R\|\le\frac{h(r)}{16}
+        +\frac{e(r)^2}{16[4-e(r)]}.
+\]
+Indeed, twice applying the resolvent identity gives
+$G-GDG+GDGD(S_0+D)^{-1}$, and replacing $D$ by $D_1$
+in the linear term introduces an error bounded by $h(r)/16$.
+
+The Schur complement, expressed in the two-dimensional coordinate
+basis $N$ (which need not be orthonormal), is
+\[
+ \mathcal S=N^TBN-N^TB
+ (G-GD_1G+\mathcal R)BN.
+\]
+Because $N^TAN=0$, its homogeneous terms of orders two and three are
+respectively
+\[
+ N^TSN-N^TAGAN=\tfrac12(x^THx)I_2
+\]
+and
+\[
+ N^T\bigl(iK_3-AGS-SGA+AGAGA\bigr)N
+ =iN^T\bigl(K_3-KGS-SGK-KGKGK\bigr)N=0.
+\]
+We used $A=iK$ and \eqref{eq:T2}, \eqref{eq:cubic-cancel}.
+The remaining difference has norm at most
+\begin{align}\label{eq:error-E}
+ E(r)={}&4r^4+\frac{20r\,g(r)+h(r)^2}{4}
+ +\frac{10r}{16}\bigl(20r\,h(r)+h(r)^2\bigr)\\
+ &+[10r+h(r)]^2
+ \left(\frac{h(r)}{16}+\frac{e(r)^2}{16[4-e(r)]}\right).\notag
+\end{align}
+For completeness, the four terms follow by estimating, in order,
+$\|N^T\Delta N\|\le4r^4$;
+\[
+ \|BGB-AGA-AGS-SGA\|
+ \le\frac{2(10r)g(r)+h(r)^2}{4};
+\]
+\[
+ \|BGD_1GB-AGD_1GA\|
+ \le\frac{10r}{16}\bigl(2(10r)h(r)+h(r)^2\bigr);
+\]
+and $\|B\mathcal RB\|\le e(r)^2\|\mathcal R\|$.
+Every displayed estimate uses only submultiplicativity,
+$\|G\|<1/4$, $\|N\|\le1$ and the preceding bounds.
+In these products $G$ annihilates the nullspace, so the range
+projections may be suppressed without changing the expressions.
+
+The certificate checks as rational inequalities, for $R=1/125$,
+\begin{equation}\label{eq:local-radius}
+ e(R)<4,\qquad E(R)<\frac3{50}R^2.
+\end{equation}
+Every coefficient in $E(r)$ and $e(r)$ is nonnegative, and $4-e(r)$ decreases on $[0,R]$; therefore $E(r)/r^2$ is nondecreasing there. Hence \eqref{eq:local-radius} applies to all $0<r\le R$. By \eqref{eq:first-checked}, the main Schur term is greater than $(3/50)r^2I_2$, while its error is smaller than that. Both the range block and the Schur complement are strictly positive. Thus $T(x)-R_b\succ0$ for $0<r\le1/125$; at $r=0$ it equals $S_0\succeq0$.
+
+\begin{theorem}[Sharp local phase bound]\label{thm:local}
+For $\|\theta\|_2\le1/125$,
+\begin{equation}\label{eq:local-bound}
+ L(1,s_1e^{i\theta_1},\ldots,s_4e^{i\theta_4},1)\le\Lambda,
+\end{equation}
+with strict inequality unless $\theta=0$. The same assertion, after the symmetries \eqref{eq:phase-sym}, holds in the corresponding balls around all ten phase centers \eqref{eq:ten-centers}.
+\end{theorem}
+\begin{proof}
+Since $|\theta_j|\le1/125<\pi/2$, the equality $r=0$ is equivalent to $\theta=0$. Equations \eqref{eq:Ttheta}--\eqref{eq:local-radius} give a Hermitian Toeplitz matrix with diagonal $\Lambda^2$ majorizing $R_b$, strictly when $\theta\ne0$. Proposition~\ref{prop:majorant} gives the desired bound. If
+$\theta\ne0$, a norm-one polynomial attaining $L(b)$ exists by
+compactness, and strict positive definiteness makes its functional value
+strictly less than $\Lambda$. Symmetries preserve $L$.
+\end{proof}
+
+\subsection{Excluding phase boxes without a global Lipschitz loss}\label{sec:boxes}
+
+Set
+\begin{equation}\label{eq:L0}
+ L_0=\frac{21865297718925}{10^{13}}
+ =2.1865297718925<\Lambda.
+\end{equation}
+The strict comparison is proved by the rational enclosure for $w$ in the certificate.
+
+\begin{lemma}[Phase-aligned box exclusion]\label{lem:box-exclude}
+Let $B(c,h)$ be a coordinate box in the normalized phase torus \eqref{eq:theta}, centered at $c\in(\R/2\pi\mathbb Z)^4$ and with each coordinate at angular distance at most $h<\pi/2$ from the corresponding coordinate of $c$. If
+\begin{equation}\label{eq:center-exclude}
+ L(b(c))< L_0\cos h,
+\end{equation}
+then $B(c,h)$ cannot contain the phase vector associated with any maximizing degree-five polynomial.
+\end{lemma}
+\begin{proof}
+A maximizing polynomial exists by compactness of the unit ball in the finite-dimensional coefficient space. For its coefficient vector $a$, choose $b_k=\overline{a_k}/|a_k|$ when $a_k\ne0$ and any unit phase when $a_k=0$. Normalize $b_0=b_5=1$ using \eqref{eq:phase-sym}, with the corresponding norm-preserving transformation of the polynomial. Suppose the resulting phase vector lies in $B(c,h)$. With $\rho_k=|a_k|$, the center has coefficient phase errors $\delta_0=\delta_5=0$ and $|\delta_k|\le h$ for $1\le k\le4$. Hence
+\[
+ L(b(c))\ge\Re\Phi_{b(c)}(P)
+ =\sum_{k=0}^5\rho_k\cos\delta_k
+ \ge\cos h\sum_{k=0}^5\rho_k
+ =\cos h\,S_5\ge\cos h\,\Lambda>L(b(c)),
+\]
+a contradiction. This statement concerns \emph{globally maximizing aligned phases}; it does not assert $L(b(\theta))\le L_0$ for every $\theta$ in the box.
+\end{proof}
+
+Two convenient sufficient tests for \eqref{eq:center-exclude} follow from Proposition~\ref{prop:majorant} and Fourier interpolation.
+
+\begin{lemma}[Five-point Fourier test]\label{lem:fourier}
+For $b=(1,b_1,b_2,b_3,b_4,1)$, let $\zeta=e^{2\pi i/5}$ and
+\begin{equation}\label{eq:dft}
+ d_j=\frac15\sum_{k=0}^4b_k\zeta^{-jk}\quad(0\le j\le4).
+\end{equation}
+Then $L(b)\le\sum_{j=0}^4|d_j|$.
+\end{lemma}
+\begin{proof}
+By discrete Fourier inversion, $\sum_jd_j\zeta^{jk}=b_k$ for $k=0,\ldots,4$. For $k=5$, the left side equals $\sum_jd_j=b_0=b_5=1$. Thus $\Phi_b(P)=\sum_jd_jP(\zeta^j)$, giving the bound.
+\end{proof}
+
+\subsection{A complete finite covering of the phase torus}\label{sec:global}
+
+The certificate described here verifies a finite exact assertion. We specify every class of leaf, the recursive partition, the arithmetic model, the counts, and the connection to Lemma~\ref{lem:box-exclude}. In particular, the reader does not need to trust a numerical optimizer.
+
+\subsubsection{Initial cells and exact symmetry reduction}
+
+At level $\ell=0$, take all boxes with centers
+\[
+ c=\frac{2\pi}{32}(t_1,t_2,t_3,t_4),\qquad
+ t_j\in\{0,1,\ldots,31\},\qquad h_0=\frac\pi{32}.
+\]
+They cover the full normalized four-torus, including boundary points. Conjugation and reversal generate the transformations $t\mapsto-t$ and $t\mapsto(t_4,t_3,t_2,t_1)$ on this grid. The group has order four. Burnside's lemma gives
+\begin{equation}\label{eq:Burnside}
+ \frac{32^4+32^2+32^2+16}{4}=262660
+\end{equation}
+representative boxes, selecting the lexicographically least tuple in each orbit. These symmetries preserve the problem and map each box to another box, so examining representatives suffices.
+
+At level $\ell\ge0$, put
+\begin{equation}\label{eq:levels}
+ h_\ell=\frac\pi{32\cdot2^\ell},\qquad
+ n_0=32,\quad n_\ell=32\cdot2^{\ell+1}\ (\ell\ge1),
+\end{equation}
+and represent each center by an integer tuple $t$ with $c=2\pi t/n_\ell$. A nonterminal level-zero box has exactly sixteen children with center tuples $4t+(\pm1,\pm1,\pm1,\pm1)$ modulo $128$. At all later levels the children have tuples $2t+(\pm1,\pm1,\pm1,\pm1)$ modulo $n_{\ell+1}$. This subdivision gives sixteen closed subboxes of half the original side length, with no gaps.
+
+\subsubsection{Four verified node types}
+
+Each visited box is assigned exactly one of the following four types.
+\begin{enumerate}[label=\textbf{\arabic*.},leftmargin=*]
+\item \textbf{Fourier leaf.} Using \eqref{eq:dft} at the center, the certificate proves
+$\sum_j|d_j|<L_0\cos h_\ell$ by outward interval arithmetic. Lemmas~\ref{lem:fourier} and \ref{lem:box-exclude} exclude the entire box.
+\item \textbf{Local leaf.} The certificate proves that the Euclidean angular distance from the box center to one of the ten points \eqref{eq:ten-centers}, plus $2h_\ell$ (the Euclidean half-diagonal of the box), is strictly less than $1/125$. The entire box is then contained in a ball treated by Theorem~\ref{thm:local}.
+\item \textbf{Toeplitz leaf.} The certificate provides five complex rational moments $m_1,\ldots,m_5$, with real and imaginary parts of denominator $10^{12}$, and defines the Hermitian Toeplitz matrix $T$ by $T_{00}=(L_0\cos h_\ell)^2$, $T_{j,k}=m_{k-j}$ for $j<k$, and conjugate symmetry. Outward interval $LDL^*$ elimination proves $T-R_{b(c)}\succ0$. Proposition~\ref{prop:majorant} and Lemma~\ref{lem:box-exclude} exclude the box.
+\item \textbf{Subdivision node.} The program visits all sixteen children as specified above.
+\end{enumerate}
+
+These alternatives are exhaustive: every node, starting from each of the \eqref{eq:Burnside} representatives, has exactly one recorded type; every subdivided node creates every one of its sixteen children. The verifier rejects missing or surplus records.
+
+\subsubsection{Certified counts and integer arithmetic}
+
+\begin{proposition}[Finite phase-cover certificate]\label{prop:global-certificate}
+The accompanying degree-five finite verifier passes all tests described above with the following exact counts:
+\begin{center}
+\begin{tabular}{lr}
+\toprule
+Initial symmetry-orbit representatives&262660\\
+All visited nodes&272852\\
+Fourier leaves&248376\\
+Local leaves&549\\
+Toeplitz leaves&23290\\
+Subdivision nodes&637\\
+Maximum leaf level&7\\\bottomrule
+\end{tabular}
+\end{center}
+The subdivision counts at levels $0,\ldots,6$ are respectively $94,93,101,101,101,102,45$. All interval $LDL^*$ pivots are strictly positive; their smallest certified lower endpoint is
+\[
+ \frac{3505258205231374557056651943921957879845929}{10^{50}}>0.
+\]
+The 2,136,052-byte uncompressed node-and-moment payload has SHA-256 digest
+\begin{center}\small\texttt{5c9c8ad7091a626d37e0dfde3694d7e30c751f94c5ae52326c9e51180c9e1577}.\end{center}
+\end{proposition}
+\begin{proof}
+This is a finite exact computation. Appendix~\ref{app:certificate} specifies its decoding, arithmetic, coverage recursion, and verification conditions; \cert{} implements them verbatim. The digest is an integrity check, not an alternative to the mathematical inequalities: all intervals, matrices, and child relations are recalculated and verified by the program. The recorded counts also satisfy $272852=262660+16\cdot637$, as required by exhaustive subdivision.
+\end{proof}
+
+\begin{theorem}[Global phase exclusion]\label{thm:phase-global}
+If $P$ is a global maximizing polynomial for $S_5$, then its normalized aligned coefficient phases lie at one of the ten points \eqref{eq:ten-centers}. Moreover $S_5=\Lambda$.
+\end{theorem}
+\begin{proof}
+Normalize the aligned phase vector as in Lemma~\ref{lem:box-exclude}, and choose an initial grid box containing it. By symmetry, we may work with its representative. Proposition~\ref{prop:global-certificate} recursively partitions this box until a verified leaf is reached. Fourier or Toeplitz leaves cannot contain the phase vector of a global maximizer, by Lemma~\ref{lem:box-exclude}; hence the phase lies in a local leaf, and so in the neighborhood of Theorem~\ref{thm:local}. Thus its phase-functional norm is at most $\Lambda$, and by alignment
+$S_5=|\Phi_b(P)|\le L(b)\le\Lambda$. Combining with \eqref{eq:lowerbound} proves equality. The strict part of Theorem~\ref{thm:local} then forces the normalized phase to equal the corresponding center.
+\end{proof}
+
+\subsection{Uniqueness and the full equality classification}\label{sec:unique}
+
+It remains to determine the maximizing polynomial for a fixed optimal phase functional. By the symmetries \eqref{eq:phase-sym}, it is enough to treat $s=(1,1,1,1,-1,1)$.
+
+\begin{proposition}[Uniqueness at the sharp phase]\label{prop:unique}
+If $\|P\|_\infty\le1$ and $\Phi_s(P)=\Lambda$, then $P=P_*$. More generally, if $|\Phi_s(P)|=\Lambda$, then $P$ is a unimodular multiple of $P_*$.
+\end{proposition}
+\begin{proof}
+The Toeplitz inequalities and $|\Phi_s(P)|=\Lambda$ yield
+\[
+ \Lambda^2=|\Phi_s(P)|^2\le a^*T_*a\le\Lambda^2\|P\|_\infty^2\le\Lambda^2.
+\]
+If $\Phi_s(P)=\Lambda$, equality forces $a^*S_0a=0$, so Lemma~\ref{lem:base} gives $a\in\ker_\C S_0=\operatorname{span}_\C\{p,q\}$. Since $s^Tp=\Lambda$ and $s^Tq=0$, the equation $s^Ta=\Lambda$ implies
+\begin{equation}\label{eq:a-beta}
+ P=P_*+\beta Q_*,\qquad\beta\in\C.
+\end{equation}
+We show $\beta=0$ from the necessary angular derivative conditions at two contact points. By \eqref{eq:complement}, at every zero $z$ of $Q_*$ on $\T$ we have $|P_*(z)|=1$. Also $Q_*(1)=0$ and $P_*(1)=1$. Hence any feasible polynomial \eqref{eq:a-beta} has modulus one at $z=1$, and its angular derivative of squared modulus must vanish there. As $P_*$ has real coefficients,
+\[
+ 0=\left.\frac{d}{dt}|P(e^{it})|^2\right|_{t=0}
+ =2\Rea\bigl(i(P_*'(1)+\beta Q_*'(1))\bigr).
+\]
+Now $Q_*'(1)=(\kappa-5)\sqrt{p_0p_5}\in\R\setminus\{0\}$, forcing $\Ima\beta=0$.
+
+The complementary polynomial factors as
+\begin{equation}\label{eq:Qfactor}
+ Q_*(z)=\sqrt{p_0p_5}\,(1-z)(1+z+\eta z^2+z^3+z^4).
+\end{equation}
+The bound $0.834<\eta<0.835$ follows by rational isolation. For a unit-circle zero of the quartic, divide its equation by $z^2$ and set $x=\cos t$ to obtain $4x^2+2x+\eta-2=0$. Its two roots
+\begin{equation}\label{eq:cd}
+ c=\frac{-1+\sqrt{9-4\eta}}4,\qquad
+ d=\frac{-1-\sqrt{9-4\eta}}4
+\end{equation}
+are distinct and belong to $(-1,1)$; hence $Q_*$ has five distinct unit-circle zeros, including $1$. Choose $z=c+i\sqrt{1-c^2}$. The same derivative condition at this contact point, now with $\beta\in\R$, gives
+\begin{equation}\label{eq:beta2}
+ 0=2\beta\Rea\left(\overline{P_*(z)}\,izQ_*'(z)\right).
+\end{equation}
+The certificate evaluates the algebraic expression in parentheses with rigorous rational intervals and proves it is nonzero. Thus $\beta=0$. For arbitrary complex value $\Phi_s(P)$ of modulus $\Lambda$, multiply $P$ by a scalar of modulus one to make this value $\Lambda$ and apply the result.
+\end{proof}
+
+\begin{proof}[Proof of the degree-five upper bound and extremizer statement]
+Section~\ref{sec:algebra} gives the attainable lower bound $\Lambda$. Theorem~\ref{thm:phase-global} supplies the matching global upper bound and restricts equality phases to \eqref{eq:ten-centers}. Proposition~\ref{prop:unique} classifies the norming polynomial at one center. Undoing scalar and variable rotations and coefficient reversal gives exactly \eqref{eq:extremizer-orbit}. Conversely, every polynomial in \eqref{eq:extremizer-orbit} has supremum norm one and coefficient modulus sum $\Lambda$, by \eqref{eq:complement}. The real polynomial $P_*$ attains the complex optimum, so the real and complex Sidon constants agree.
+\end{proof}
+
+
+
+\section{Degrees six and seven: unrestricted global optimality}\label{sec:sixseven}
+
+\subsection{Stationary root boxes, feasibility and lower bounds}\label{sec:candidates}
+
+We now specify the candidates without assigning a numerical approximation the status of an exact algebraic definition.  Fix $n\in\{6,7\}$ and write $a_k=x_k+iy_k$, taking the gauge $y_0=y_1=0$ and $x_0,x_1>0$.  Introduce $n$ putative contacts $z_j=u_j+iv_j$, positive weights $\lambda_j$, and positive amplitudes $\rho_k$.  Let
+\[
+ P(z)=\sum_{k=0}^n a_kz^k,\quad D P(z)=zP'(z),\quad
+ f_k=\rho_k\sum_{j=1}^n\lambda_j\overline{P(z_j)}z_j^k-\overline{a_k}.
+\]
+The following system, when split into real and imaginary parts, consists of $6n+1$ \emph{rational real polynomial equations} in the same number of real variables:
+\begin{equation}\label{eq:stationarysystem}
+\begin{aligned}
+ |z_j|^2&=1,\quad |P(z_j)|^2=1,\quad
+ \Ima\bigl(\overline{P(z_j)}DP(z_j)\bigr)=0 &&(1\le j\le n),\\
+ \rho_k^2&=|a_k|^2,\qquad \Rea f_k=0 &&(0\le k\le n),\\
+ \Ima f_k&=0 &&(2\le k\le n).
+\end{aligned}
+\end{equation}
+The order of variables is
+\begin{equation}\label{eq:variableorder}
+ (x_0,\ldots,x_n);\ (y_2,\ldots,y_n);\ (u_1,\ldots,u_n);\
+ (v_1,\ldots,v_n);\ (\lambda_1,\ldots,\lambda_n);\ (\rho_0,\ldots,\rho_n).
+\end{equation}
+For each $n$, Appendix~\ref{app:rootboxes} specifies a rational box $\mathcal B_n$ by giving all centers with denominator $10^{15}$ and common radius $10^{-12}$.  The finite verifiers check that \eqref{eq:stationarysystem} has exactly one real solution in $\mathcal B_n$, that its weights and amplitudes are positive and its contacts distinct, and that $x_0,x_1>0$.  Denote that solution by $\xi_n$, its polynomial by $P_n^*$, and set
+\begin{equation}\label{eq:Cn}
+ C_n=\sum_{k=0}^n\rho_k(\xi_n)\quad(n=6,7).
+\end{equation}
+Since the system and isolating boxes have rational data, $C_n$ is a uniquely defined real algebraic number.  At this stage this is a multivariate algebraic specification. Section~\ref{sec:minimal} upgrades it to the one-variable minimal-polynomial descriptions in Theorems~\ref{thm:main6} and~\ref{thm:main7}.
+
+\begin{lemma}[Isolation and feasibility interface]\label{lem:feasible67}
+Each $\mathcal B_n$ contains exactly one real solution of \eqref{eq:stationarysystem}.  The corresponding $P_n^*$ satisfies $\|P_n^*\|_\T=1$, has $n+1$ nonzero coefficients and precisely $n$ distinct, nondegenerate contacts, and
+\[
+ \J(P_n^*)=C_n,\qquad
+ \sum_{j=1}^n\lambda_j=C_n,\qquad
+ \sum_j\lambda_j\overline{P_n^*(z_j)}z_j^k=\frac{\overline{a_k}}{\rho_k}
+ \quad(0\le k\le n).
+\]
+\end{lemma}
+\begin{proof}
+We specify the angular system used for the finite existence and
+uniqueness test. Its $4n$ coordinates are
+$u=(x_0,\ldots,x_n,y_2,\ldots,y_n,t_1,\ldots,t_n,
+\lambda_1,\ldots,\lambda_n)$, with $z_j=e^{it_j}$ and
+$\rho_k=|a_k|>0$. Define
+\[
+ r_k=\sum_j\lambda_j\overline{P(e^{it_j})}e^{ikt_j}
+          -\overline{a_k}/|a_k|.
+\]
+In coordinate order the real map $F$ consists of
+$\Rea r_0,\ldots,\Rea r_n$, $\Ima r_2,\ldots,\Ima r_n$,
+the $n$ values $|P(e^{it_j})|^2-1$, and the $n$ values
+$-\Ima(\overline{P(e^{it_j})}DP(e^{it_j}))$.
+The angular box $B$ has rational center $c$ (denominator $10^{15}$)
+and independent radius $10^{-9}$, with center and rational
+preconditioner $R$ supplied in the certificate. This is the angular
+uniqueness box; the Cartesian box $\mathcal B_n$ in the appendix has
+radius $10^{-12}$. Outward interval automatic differentiation checks
+\begin{equation}\label{eq:contraction67}
+ \sup_{u\in B}\|I-RDF(u)\|_\infty<\tfrac12,
+ \qquad c-RF(c)+(I-RDF(B))(B-c)\subset\operatorname{int}B.
+\end{equation}
+Thus $u\mapsto u-RF(u)$ contracts $B$ into itself. Its unique fixed
+point is a zero of $F$, because the first inequality also implies that
+$R$ is nonsingular.  The code then certifies that this root maps into the full rational box $\mathcal B_n$, and that every solution in $\mathcal B_n$ maps back into $B$; on a sufficiently short arc, a chord displacement $d$ bounds angular displacement by $2d$.  Positivity of $\rho_k$ identifies the positive square root uniquely.  Therefore the two box representations describe the same unique solution.
+
+Two imaginary equations were omitted in
+\eqref{eq:stationarysystem}. For the residuals $r_k$ just defined,
+the listed equations imply that only $\Ima r_0,\Ima r_1$ could remain.  Since $|P(z_j)|=1$,
+\[
+ \sum_ka_kr_k=\sum_j\lambda_j-\sum_k\rho_k\in\R,
+\]
+and, by the tangency equations, $\Ima\sum_kka_kr_k=0$.  As $a_0,a_1$ are strictly positive real, the second identity forces $\Ima r_1=0$, then the first forces $\Ima r_0=0$.  Therefore all complex moment equations hold, and their contraction against $a_k$ yields $\sum_j\lambda_j=C_n$.
+
+For complete circle feasibility, put $V(z)=\prod_{j=1}^n(z-z_j)$.  Nonnegativity of the candidate defect is \emph{not} assumed beforehand.  Instead, the value and tangency equations show that the Laurent polynomial $1-|P|^2$ has a double zero at each of the $n$ distinct contacts.  Multiplication by $z^n$ produces a polynomial of degree at most $2n$; hence it is proportional to $V(z)\,z^n\overline{V(1/\bar z)}$, equivalently
+\begin{equation}\label{eq:exactcomplement67}
+ 1-|P(e^{it})|^2=\alpha\,|V(e^{it})|^2,
+ \quad \alpha=\frac{1-\sum_k|a_k|^2}{\sum_k|[z^k]V|^2}.
+\end{equation}
+The verifiers check $\sum|a_k|^2<1$, so $\alpha>0$.  Equation \eqref{eq:exactcomplement67} proves $\|P\|_\T\le1$ globally, with equality precisely at the $n$ listed nodes and a strict quadratic loss away from each simple zero of $V$.  Positivity of the amplitudes, weights, and pairwise distinctness of contacts are separately certified interval inequalities.  All asserted properties follow.
+\end{proof}
+
+The lemma supplies an important general lesson: a solution of the critical equations is not automatically feasible.  Feasibility here follows from a \emph{global polynomial identity} with a rigorously positive coefficient, not from inspecting the circle at finitely many approximate points.
+
+\subsection{A locally sharp certificate with a one-dimensional real kernel}\label{sec:atom}
+
+Let $n\in\{6,7\}$, and abbreviate $C=C_n$, $P=P_n^*$, $\rho=(\rho_0,\ldots,\rho_n)^T$, $b_k=\bar a_k/\rho_k$ and $z_j=e^{it_j}$.  At the center $\nu=0$ we have a positive atomic representation with $\sum\lambda_j=C$.  Set $d=n-1$.  We use the end-point gauge $\theta_0=\theta_n=0$ for the varying phases, with a \emph{rational invertible preconditioner} $B\in\Q^{d\times d}$ and $\theta=B\nu$.  For $k=0,n$ let the $k$th row $\Phi_k$ of the extended phase matrix vanish; the interior rows are those of $B$.
+
+Fix rational matrices $A,L\in\Q^{n\times d}$ with $\sum_jL_{jh}=0$ for each $h$.  Move the contact angles and positive weights by
+\[
+ t_j(\nu)=t_j+(A\nu)_j,\qquad
+ \lambda_j(\nu)=\lambda_j+(L\nu)_j.
+\]
+Define a positive Toeplitz matrix $T(\nu)$ by the atomic measure $C\sum_j\lambda_j(\nu)\delta_{e^{it_j(\nu)}}$, and put
+\begin{equation}\label{eq:atomS}
+ S(\nu)=\Rea\bigl(D_{b\odot e^{iB\nu}}T(\nu)
+ D_{\overline{b\odot e^{iB\nu}}}\bigr)-\mathbf1\mathbf1^T.
+\end{equation}
+The endpoint phases in this formula remain fixed.  Whenever $\lambda_j(\nu)>0$ and $S(\nu)\succeq0$, Theorem~\ref{thm:realdual} proves $M_n(b\odot e^{iB\nu})\le C$.  Notice that $T(\nu)$ is \emph{automatically positive}, a substantial economy compared with directly correcting a singular complex Toeplitz matrix.
+
+\begin{lemma}[Finite Taylor--Schur criterion]\label{lem:atomcriterion}
+Assume $\|\rho\|_2\le1$, $S(0)\rho=0$ and
+$\ker_\R S(0)=\R\rho$. The norm condition holds for the candidate
+by Parseval (indeed the certificate checks $\sum_k|a_k|^2<1$).  Let $W\in\Q^{m\times n}$ be such that $[\rho\ W]$ is invertible and
+$W^TS(0)W\succeq\tau I_n$ for some $\tau>0$.  Write
+$S(\nu)=S_0+S_1(\nu)+S_2(\nu)+S_3(\nu)+\Delta_4(\nu)$,
+where $S_j$ is homogeneous of degree $j$.  Suppose $\rho^TS_1(\nu)\rho=0$.  Define
+\[
+ h(\nu)=-W(W^TS_0W)^{-1}W^TS_1(\nu)\rho,
+ \quad H[\nu]=\rho^TS_2(\nu)\rho-
+ (W^TS_1(\nu)\rho)^T(W^TS_0W)^{-1}(W^TS_1(\nu)\rho).
+\]
+Assume $H[\nu]\ge\mu\|\nu\|^2$ with $\mu>0$, and the tensor norm estimates and scalar endpoint inequalities \eqref{eq:atom-bounds}--\eqref{eq:atom-radius} below.  Then $S(\nu)\succ0$ whenever $0<\|\nu\|\le R$, while $S(0)\succeq0$ with kernel $\R\rho$.  If also $\lambda_j>R\|L_j\|_2$ for each row, this gives a sharp local bound $M_n\le C$, strict away from the center.
+\end{lemma}
+\begin{proof}
+We give the exact finite formulae, so the certificate's checked quantities have a defined mathematical meaning.  Put $w_{jk}=\bar b_ke^{ikt_j}$ and
+$\beta_{j,ik,h}=(k-i)A_{jh}-(\Phi_k-\Phi_i)_h$.  Then the $(i,k)$ entry of $S(\nu)$ is
+\[
+ C\sum_j(\lambda_j+L_j\nu)\Rea\left(\bar w_{ji}w_{jk}
+ \exp\bigl(i\sum_h\beta_{j,ik,h}\nu_h\bigr)\right)-1.
+\]
+The homogeneous tensor of order $q\in\{1,2,3\}$, for an ordered multi-index $(h_1,\ldots,h_q)$, has $(i,k)$ entry
+\begin{equation}\label{eq:atom-tensor}
+ \frac C{q!}\sum_j\left[\lambda_j\Rea(i^q\bar w_{ji}w_{jk})\prod_{r=1}^q\beta_{j,ik,h_r}
+ +\sum_{r=1}^qL_{j,h_r}\Rea(i^{q-1}\bar w_{ji}w_{jk})
+ \prod_{s\ne r}\beta_{j,ik,h_s}\right].
+\end{equation}
+The scalar exponential Taylor bound
+$|e^{iu}-\sum_{q=0}^3(iu)^q/q!|\le|u|^4/24$
+and its order-two counterpart for the terms multiplied by $L_j\nu$ yield
+$\|\Delta_4\|\le e_4r^4$ for $r=\|\nu\|$, where the verifier forms $e_4$ from the Frobenius norm of the entrywise upper bounds
+\[
+ C\sum_j\left(\lambda_j\|\beta_{j,ik}\|^4/24+
+ \|L_j\|\|\beta_{j,ik}\|^3/6\right).
+\]
+Positive weights and stationarity yield $\rho^TS_1\rho=0$: the derivative of the atomic quadratic form in the node variables vanishes at contacts; the weight derivatives sum to zero; the phase derivative vanishes by the complex moment equations.
+
+Set $r=\|\nu\|$.  Since $h(\nu)\in\ran W$, the matrix
+$[\rho+h(\nu),W]$ is invertible whenever $[\rho,W]$ is.
+In this basis $\|\rho+h(\nu)\|_2\le1+ar$, which justifies the
+remainder factors used below. The change of basis cancels the first-order
+off-diagonal block because
+$W^TS_0h+W^TS_1\rho=0$.  In this basis, its scalar block has quadratic part $H[\nu]$ and cubic part
+\[
+ \Gamma_3=\rho^TS_3\rho+2h^TS_2\rho+h^TS_1h,
+\]
+and the off-diagonal block starts at order two, with terms
+$W^T(S_2\rho+S_1h)$ and $W^T(S_3\rho+S_2h)$.  These are identities obtained by multiplying the homogeneous expansions, not numerical asymptotics.
+
+Assume, for $r\le R$, that the following exact rational bounds have been certified:
+\begin{equation}\label{eq:atom-bounds}
+\begin{gathered}
+ \|h\|\le ar,\quad |\Gamma_3|\le g_3r^3,\quad
+ \|W^T(S_2\rho+S_1h)\|\le c_2r^2,\\
+ \|W^T(S_3\rho+S_2h)\|\le c_3r^3,\quad
+ \|S_2\|\le s_2r^2,\quad\|S_3\|\le s_3r^3,\\
+ \|W^TS_jW\|\le k_jr^j\quad(j=1,2,3),\quad
+ \|W\|\le w,\quad \|\Delta_4\|\le e_4r^4.
+\end{gathered}
+\end{equation}
+For $0<r\le R$ put
+\begin{equation}\label{eq:atom-sc-functions}
+\begin{aligned}
+ e(r)&=k_1r+k_2r^2+k_3r^3+w^2e_4r^4,\\
+ A(r)&=\mu r^2-g_3r^3-
+ \bigl(2as_3+a^2s_2+a^2s_3r+e_4(1+ar)^2\bigr)r^4,\\
+ D(r)&=c_2r^2+c_3r^3+ws_3ar^4+we_4(1+ar)r^4.
+\end{aligned}
+\end{equation}
+The range block is at least $(\tau-e(r))I$, the scalar block at least $A(r)$, and the off-diagonal block has norm at most $D(r)$.  Thus the Schur complement is strictly positive whenever
+\begin{equation}\label{eq:atom-radius}
+ e(R)<\tau,\qquad A(R)>\frac{D(R)^2}{\tau-e(R)}.
+\end{equation}
+After division by $r^2$, every error term in these inequalities is nonnegative and nondecreasing with $r$, while the positive quadratic main term is constant.  Therefore checking $R$ implies the result for all $0<r\le R$.  The fixed positive weights persist by $\lambda_j>R\|L_j\|_2$.  Strict matrix positivity yields a strict amplitude inequality for all nonzero polynomials, completing the proof.
+\end{proof}
+
+For $n=6,7$ the certificate checks the following rational constants; its corresponding verified ellipsoid and guaranteed Euclidean phase radii appear below.
+\begin{center}\small
+\begin{tabular}{c|cc}
+\toprule Parameter&$n=6$&$n=7$\\\midrule
+$\tau=\mu$&$99/100$&$99/100$\\
+$(k_1,k_2,k_3)$&$(6,19,9)$&$(5,10,10)$\\
+$(s_2,s_3)$&$(21,13)$&$(48,53)$\\
+$a$&$27/100$&$21/20$\\
+$g_3$&$17/10$&$8$\\
+$(c_2,c_3)$&$(6,3)$&$(8,9)$\\
+$e_4$&$48$&$380$\\
+$w$&$17/10$&$89/100$\\
+$R$&$1/16$&$1/32$\\
+Euclidean phase radius&$1/64$&$1/128$\\\bottomrule
+\end{tabular}
+\end{center}
+The matrices $A,L,B,W$ are printed in Appendix~\ref{app:matrices} as exact rational data and embedded in the verifier.  For each $n$ it reconstructs \eqref{eq:atom-tensor} and checks all matrix inequalities and scalar comparisons, rather than trusting these printed bounds as independent axioms.  The condition $\|B^{-1}\|<4$ guarantees the stated Euclidean radii.
+
+\subsection{The global phase certificate and exhaustive coverage}\label{sec:global67}
+The transformations $b_k\mapsto\gamma\omega^kb_k$, conjugation and
+coefficient reversal preserve both $L_n$ and $M_n$. Normalize
+$b_0=b_n=1$, leaving $d=n-1$ internal phases. The residual rotations
+$\omega^n=1$, phase negation and internal-coordinate reversal are exact
+symmetries of this normalized torus.
+
+\subsubsection{Alignment excludes whole boxes}
+For an aligned feasible polynomial $a_k=\bar b_k\rho_k$ with
+$\rho_k\ge0$, suppose its normalized phase lies in a box of center $c$
+and coordinate half-widths $h_k<\pi/2$. Endpoint errors are zero, so
+\begin{equation}\label{eq:phasealign}
+ \Rea\Phi_{b(c)}(P)=\sum_{k=0}^n\rho_k\cos\delta_k
+ \ge\cos(\max h_k)\J(P).
+\end{equation}
+Thus a strict center estimate $L_n(b(c))<C_n\cos(\max h_k)$ excludes
+every aligned feasible polynomial with $\J(P)\ge C_n$ from the entire
+box. As in degree five, this is a statement about aligned competitors,
+not a sharp pointwise bound at every phase in the box.
+
+\subsubsection{The four leaf predicates}
+The verifier rechecks each of the following predicates, rather than
+accepting the stored leaf label.
+\begin{enumerate}[leftmargin=*]
+\item \emph{DFT exclusion.} For $\zeta=e^{2\pi i/n}$ and $b_0=b_n=1$,
+\[
+ d_j=\frac1n\sum_{k=0}^{n-1}b_k\zeta^{-jk},\quad
+ \Phi_b(P)=\sum_{j=0}^{n-1}d_jP(\zeta^j),\quad L_n(b)\le\sum_j|d_j|.
+\]
+Compare this center bound strictly with the aligned threshold.
+\item \emph{Interpolation exclusion.} For $n+1$ distinct roots of unity
+$\zeta_j$, let $V(z)=\prod_j(z-\zeta_j)$ and
+$\ell_j(z)=V(z)/((z-\zeta_j)V'(\zeta_j))=\sum_k\ell_{jk}z^k$.
+Lagrange interpolation gives
+$L_n(b)\le\sum_j|\sum_kb_k\ell_{jk}|$.
+Each atlas entry records integer orders and exponents of roots of unity;
+its interpolation coefficients and strict comparison are reconstructed.
+\item \emph{Toeplitz exclusion.} Rebuild a rational Hermitian Toeplitz
+$T$ with $T-\bar b b^T\succ0$ and diagonal at most the threshold squared.
+Every pivot in interval complex $LDL^*$ must have positive lower endpoint.
+Lemma~\ref{lem:moment} gives $L_n(b)\le\sqrt{T_{00}}$, with strictness
+at a nonzero norming polynomial because the matrix difference is positive
+definite. Compactness then gives the required strict center estimate.
+\item \emph{Local sharpness.} Certify that the entire box is contained
+in a symmetry image of a proved local ellipsoid. With the rational phase
+preconditioner $B$ and half-width vector $h$, it suffices that
+\begin{equation}\label{eq:localbox}
+ \|B^{-1}\delta_{\rm center}\|_2+
+ \max_{s\in\{\pm1\}^d}\|B^{-1}\diag(h)s\|_2<R.
+\end{equation}
+The maximum of this convex norm on the width box is attained at a
+vertex. Circular displacements, including wrap-around, are rigorously
+bounded. Lemma~\ref{lem:atomcriterion} gives $M_n\le C_n$ throughout
+this leaf and strictness except at a candidate center.
+\end{enumerate}
+
+\subsubsection{Initial orbits, branching and exhaustion}
+Start with centers $2\pi t/(2n)$ and half-width $\pi/(2n)$ in every
+internal coordinate. Reduce the $(2n)^{n-1}$ cells by the residual
+rotations, negation and reversal using lexicographically least integer
+representatives. There are $10616$ representatives at degree six and
+$269712$ at degree seven. Every branch splits \emph{all} $n-1$
+coordinates and has exactly $2^{n-1}$ children, with their common
+boundaries included. Integer centers and levels determine every child.
+The complete depth-first traversal has these verified statistics:
+\begin{center}\small
+\begin{tabular}{lrr}
+\toprule Quantity&$n=6$&$n=7$\\\midrule
+Initial orbit representatives&10616&269712\\
+DFT exclusion leaves&8653&220856\\
+Interpolation exclusion leaves&15418&221505\\
+Toeplitz exclusion leaves&37&0\\
+Local sharp leaves&985&12949\\
+Branch nodes&467&2946\\
+All nodes&25560&458256\\
+Maximum refinement depth&7&7\\\bottomrule
+\end{tabular}
+\end{center}
+In both columns, the node count equals the initial count plus
+$2^{n-1}$ times the branch count. These identities are consistency
+checks; proof also requires every leaf inequality, every child relation,
+the enumeration of all initial orbits and exact payload exhaustion.
+
+\begin{theorem}[Unrestricted global upper bounds]\label{thm:global67}
+The finite predicates above imply $S_6=C_6$ and $S_7=C_7$ for complex
+coefficients. Equality phases are symmetry images of the candidate phases.
+\end{theorem}
+\begin{proof}
+A norm-one global maximizer exists. Align its coefficient phases, using
+arbitrary phases at zero coefficients, normalize the endpoint phases,
+and take an initial orbit representative containing it. Traverse its
+complete verified tree to a containing leaf. A strict DFT, interpolation
+or Toeplitz leaf contradicts \eqref{eq:phasealign}, since the feasible
+candidate gives $S_n\ge C_n$. At a local leaf, alignment and real duality
+give $\J(P)\le M_n(b)\le C_n$. Hence $S_n=C_n$. Strict local matrix
+positivity away from the center forces an equality phase to be a
+candidate phase. This argument covers zero coefficients and deficient
+contact competitors without assuming their absence.
+\end{proof}
+
+\subsection{Rigidity and the reversal identity used in elimination}\label{sec:rigidity}
+At a candidate phase the real matrix $S(0)$ has kernel $\R\rho$.
+If an aligned norm-one polynomial with amplitude vector $x\ge0$ attains
+$C_n$, then
+\[
+ 0\le x^TS(0)x=C_n\sum_j\lambda_j|P(z_j)|^2-(\mathbf1^Tx)^2\le0.
+\]
+Thus $x\in\R\rho$, and $\mathbf1^Tx=C_n$ gives $x=\rho$.
+Consequently all normalized extremizers are scalar and variable rotations
+of $P_n^*$ or its coefficientwise conjugate. Reversal introduces no new orbit: after normalization and contact
+reordering the reversed stationary point returns strictly to the angular
+box $B$ of radius $10^{-9}$ in Lemma~\ref{lem:feasible67}.
+Uniqueness in that box identifies the two points.
+The gauge $a_0,a_1>0$ is unique, while $\Ima a_2\ne0$ by its certified
+interval; conjugation therefore gives a distinct orbit. These observations
+also justify the reciprocal representative used in the next section.
+
+
+\section{Rational charts and six-variable critical systems}\label{sec:rational}
+The global phase certificates in Sections~\ref{sec:five} and
+\ref{sec:sixseven} prove optimality without eliminating their algebraic
+parameters. We now perform the separate identification needed for a
+minimal polynomial. Crucially, the symmetry used in this section is
+\emph{proved for the globally certified candidate}, and is not assumed
+for all polynomials in the definition of $S_n$.
+
+\subsection{A reciprocal representative and its real complement}
+Let $a_k$ denote the coefficients of the certified candidate in the
+gauge $a_0,a_1>0$. Set
+\[
+ \gamma=\frac{\overline{a_n}}{|a_n|},\qquad
+ \eta=\frac{\overline{\gamma a_{n-1}}}{|a_{n-1}|},\qquad
+ \widetilde a_k=\gamma\eta^k a_{n-k}.
+\]
+These choices make $\widetilde a_0,\widetilde a_1$ positive real.
+The transformed contacts are $\widetilde z_j=(\eta z_j)^{-1}$,
+with the same positive weights, reordered by angle. Substitution in
+the moment, value and tangency equations proves that this is another
+stationary solution. The verifier encloses its angular coordinates
+strictly inside $B$, the radius-$10^{-9}$ uniqueness box of
+Lemma~\ref{lem:feasible67}. Its uniqueness gives
+$a_k=\gamma\eta^k a_{n-k}$ exactly. Applying this identity twice
+gives $\gamma^2\eta^n=1$, since $a_0\ne0$.
+
+Choose $\zeta\in\T$ with $\zeta^2=\eta^{-1}$ and put
+$P(z)=P_n^*(\zeta z)/a_0$. Its coefficients satisfy
+$P=\sigma P^{\rm rev}$ with $\sigma=\gamma\zeta^{-n}$ and
+$\sigma^2=1$. If $n$ is even, the nonzero middle coefficient forces
+$\sigma=1$. If $n$ is odd, replacing $\zeta$ by $-\zeta$ changes
+the sign of $\sigma$, so choose the positive sign. Thus $P$ is
+palindromic with $P_0=P_n=1$. The complementary factor constructed
+below then gives
+\begin{equation}\label{eq:normalized-pair}
+ P=P^{\rm rev},\quad P_0=P_n=1,\quad
+ |P|^2+|Q|^2=E\quad\hbox{on }\T,
+ \qquad Q\in\R[z],\ Q=-Q^{\rm rev},\ Q_0=1,\ Q_n=-1.
+\end{equation}
+Here $E=a_0^{-2}>0$, since the original candidate has norm one;
+thus normalization to norm one divides $P$ by $\sqrt E$.
+We justify all assertions about $Q$. Palindromicity makes $|P(e^{it})|$
+even in $t$, so its full set of $n$ contacts is closed under conjugation.
+The monic product of their linear factors is consequently real. Normalize
+that product to have constant coefficient one. All its roots are on
+$\T$, so it is real reciprocal or real antireciprocal, with leading
+coefficient $+1$ or $-1$. The highest autocorrelation in a complementary
+identity, with $P_0=P_n=1$, forces the latter sign and forces the squared
+scale of this normalized complement to be one. Thus \eqref{eq:normalized-pair}
+follows from full contact and the exact feasibility identity; enclosing
+an imaginary part in an interval containing zero would not suffice.
+
+\subsection{The degree-six rational chart}\label{sec:chart6}
+For real $b,c,t$, put $B=b^2$ and define the palindromic polynomial by
+\begin{align}\label{eq:chart6}
+ P_0=P_6&=1,\nonumber\\
+ P_1=P_5&=t(2c-b)+ib,\nonumber\\
+ P_2=P_4&=(bc-B/4)(1-t^2)-t^2+it(2+2bc-B/2),\\
+ P_3&=-bt(bc+2)+i\{c(B-4)(1-t^2)/2-2bt^2\}.\nonumber
+\end{align}
+Set $q_1=\Rea P_1$, $q_2=\Rea P_2+B/2$ and
+\begin{equation}\label{eq:energy6}
+ Q=(1,q_1,q_2,0,-q_2,-q_1,-1),\qquad
+ E_6=\frac{(B+4)^2(1+t^2)^2(1+c^2)}4.
+\end{equation}
+Direct autocorrelation expansion gives $|P|^2+|Q|^2=E_6$ on $\T$.
+These are exact polynomial identities, checked symbolically by
+\texttt{chart6\_geometry.identities} as well as justified by substitution.
+
+This chart covers a neighborhood of the normalized global candidate.
+Indeed, write $a=\Rea P_1$, $b=\Ima P_1$, $e=\Ima P_2$.
+For $bt\ne0$ its inverse is
+\begin{equation}\label{eq:inverse6}
+ t=\frac{2(e-ab)}{b^2+4},\qquad c=\frac{a+bt}{2t}.
+\end{equation}
+To verify local exhaustiveness rather than only substitution in one
+direction, the highest three nonconstant autocorrelations in an arbitrary
+pair \eqref{eq:normalized-pair} give
+$q_1=a$, $q_2=\Rea P_2+b^2/2$ and
+$\Rea P_3=ab^2/2-be$. The remaining two independent lag equations are
+linear in $\Rea P_2,\Ima P_3$. Their determinant is
+$(b^2+4)^2t/2\ne0$, and their solution is precisely
+\eqref{eq:chart6}. The certificate checks the lag equations and this
+determinant identity exactly, and checks $bt\ne0$ at the global point.
+
+Use the sign invariants
+\[
+ B=b^2,\qquad C=bc,\qquad U=t^2,
+\]
+whose Jacobian determinant with respect to $(b,c,t)$ is $4b^2t\ne0$.
+For $r_j=|P_j|>0$, $1\le j\le3$, their squared values and energy are
+\begin{align}\label{eq:R6}
+ R_1&=B+U(2C-B)^2/B,\nonumber\\
+ R_2&=\{(C-B/4)(1-U)-U\}^2+U(2+2C-B/2)^2,\\
+ R_3&=BU(C+2)^2+\{C(B-4)(1-U)-4BU\}^2/(4B),\nonumber\\
+ E_6&=(B+4)^2(1+U)^2(B+C^2)/(4B).\nonumber
+\end{align}
+Thus the objective is $(2+2r_1+2r_2+r_3)/\sqrt{E_6}$.
+
+\subsection{A uniform symmetric product and its rational inverse}\label{sec:QSP}
+For a polynomial of degree at most $d$, use the fixed-length reversal
+$\operatorname{rev}_d f(z)=z^df(1/z)$, padding its coefficient list
+with zeros to length $d+1$. In this subsection, reversal always uses
+the stated ambient degree, even when a leading coefficient vanishes.
+For a polynomial of degree at most $d$, use the fixed-length reversal
+$\operatorname{rev}_d f(z)=z^df(1/z)$, padding its coefficient list
+with zeros to length $d+1$. In this subsection, reversal always uses
+the stated ambient degree, even when a leading coefficient vanishes.
+For any $n\ge2$, let $m=\lfloor n/2\rfloor$, take real parameters
+$t_1,\ldots,t_m$, and set
+\begin{equation}\label{eq:QSP-product}
+\begin{gathered}
+ W(z)=\frac12\begin{pmatrix}1+z&1-z\\1-z&1+z\end{pmatrix},\qquad
+ D(t)=\diag(1+it,1-it),\\
+ \mathcal U_n=2W D(t_1)W D(t_2)\cdots D(t_{n-1})W,
+ \qquad t_j=t_{n-j}.
+\end{gathered}
+\end{equation}
+The factors are arranged in the displayed symmetric order, using the
+independent $t_1,\ldots,t_m$ when indices exceed $m$.
+The first row is $(P,Q)$. Since $W$ is unitary on $\T$ and
+$D(t)D(t)^*=(1+t^2)I$, it satisfies \eqref{eq:normalized-pair}, with
+\begin{equation}\label{eq:QSP-energy}
+ E_n=4\prod_{j=1}^m(1+t_j^2)^{e_j},\qquad
+ e_j=2\quad\hbox{except }e_m=1\hbox{ when }n\hbox{ is even}.
+\end{equation}
+For clarity, transpose symmetry of the product gives its symmetric
+off-diagonal entries. Conjugation of the coefficient matrix is its
+conjugation by the exchange matrix, which interchanges the diagonal
+entries. These two facts make $Q$ real. Replacing $z$ by $1/z$ gives
+$P^{\rm rev}=P$, $Q^{\rm rev}=-Q$, and evaluation of the constant
+coefficient gives $P_0=Q_0=1$. Alternatively, each assertion follows by
+induction on the factors. These identities are also symbolically audited.
+
+The inverse is essential for identifying an arbitrary certified symmetric
+point with this chart. Write $P=A+iB_0$ with real palindromic $A,B_0$.
+Then
+\begin{equation}\label{eq:pair-identity}
+ A^2+B_0^2-Q^2=E_nz^n.
+\end{equation}
+For $n\ge3$, put $t=[z]B_0/2$ and
+\[
+ a=A+Q,\quad b=B_0/z,\quad c=(A-Q)/z^2,\quad d=(1+t^2)^2,
+\]
+and form
+\begin{equation}\label{eq:peel}
+ a'=(a+2tb-t^2c)/d,\quad
+ c'=(c+2tb-t^2a)/d,\quad
+ b'=\{(1-t^2)b-t(a+c)\}/d.
+\end{equation}
+The reduced pair is
+$P'=(a'+c')/2+ib'$, $Q'=(a'-c')/2$, of degree at most $n-2$.
+To check that every recursive step is legitimate, the coefficients of
+$z,z^2$ in \eqref{eq:pair-identity} give
+$A_1=Q_1$ and $A_2-Q_2=-B_{0,1}^2/2=-2t^2$.
+Together with the endpoint coefficients, these identities show that
+$a,b,c$ are polynomials of degree at most $n-2$, with
+$a_0=2,b_0=2t,c_0=-2t^2$. Hence \eqref{eq:peel} gives
+$a'_0=2,c'_0=b'_0=0$.
+With ambient degree $n-2$, reversal exchanges $a,c$ and fixes $b$;
+it therefore exchanges $a',c'$ and fixes $b'$. Consequently
+\[
+ P'_0=P'_{n-2}=Q'_0=1,\qquad Q'_{n-2}=-1,
+ \quad \operatorname{rev}_{n-2}P'=P',\quad
+ \operatorname{rev}_{n-2}Q'=-Q',\quad Q'\in\R[z].
+\]
+Direct multiplication also gives
+\[
+ a'c'+(b')^2=\frac{ac+b^2}{(1+t^2)^2}
+             =\frac{E_n}{(1+t^2)^2}z^{n-2}.
+\]
+Thus $|P'|^2+|Q'|^2=E'$ on $\T$, with
+$E'=E_n/(1+t^2)^2>0$, and the reduced pair has all the original
+normalization properties.
+
+For the reverse step, \eqref{eq:peel} is inverted by
+\[
+ a=a'-2tb'-t^2c',\qquad c=c'-2tb'-t^2a',\qquad
+ b=t(a'+c')+(1-t^2)b'.
+\]
+Writing coefficientwise conjugation as a bar, these formulas are
+equivalent to the matrix identity
+\[
+ \begin{pmatrix}P&Q\\Q&\bar P\end{pmatrix}
+ =W D(t)\begin{pmatrix}P'&Q'\\Q'&\overline{P'}\end{pmatrix}D(t)W.
+\]
+It proves exact recovery of the two outer equal factors. For degree
+one the normalized pair is necessarily $(1+z,1-z)$, of energy $4$.
+For degree two, antireversal gives $Q_1=0$ and the lag-one equation
+gives $\Rea P_1=0$, so the pair is
+$(1+2itz+z^2,1-z^2)$, of energy $4(1+t^2)$.
+Induction now proves the product representation and its rational
+inverse, whose only step denominator is $(1+t^2)^2>0$.
+No symmetry of an arbitrary Sidon extremizer is assumed here.
+
+For degree seven there are three parameters. Simultaneous coefficient
+conjugation changes $(t_1,t_2,t_3)$ to its negative, so use
+\begin{equation}\label{eq:quotient7}
+ B=t_1^2,\quad C=t_1t_2,\quad D=t_1t_3,\qquad
+ \det\frac{\partial(B,C,D)}{\partial(t_1,t_2,t_3)}=2t_1^3.
+\end{equation}
+Let $P_j(t)$ denote the explicitly defined coefficients of
+\eqref{eq:QSP-product}. Define $R_j(B,C,D)$ as the invariant rational
+expression $|P_j(t)|^2$, $1\le j\le3$, under \eqref{eq:quotient7}.
+This is an explicit finite definition: expand the seven $W$ factors,
+substitute $t_1^2=B,t_2=C/t_1,t_3=D/t_1$, and replace every even power
+of $t_1$ by the corresponding power of $B$. Invariance ensures that no
+odd power remains. Then
+\begin{equation}\label{eq:energy-target7}
+ E_7=\frac{4(1+B)^2(B+C^2)^2(B+D^2)^2}{B^4},\qquad
+ \frac{\J(P)}{\sqrt{E_7}}
+ =\frac{(1+r_1+r_2+r_3)B^2}{(1+B)(B+C^2)(B+D^2)},\quad r_j=\sqrt{R_j}>0.
+\end{equation}
+For the positive real branch, all denominators in this display are
+strictly positive. The inverse uses $t_1=-\sqrt B$, $t_2=C/t_1$,
+$t_3=D/t_1$; this sign is checked against the global point.
+
+\subsection{Critical equations and printed uniqueness boxes}\label{sec:criticalboxes}
+For either chart write $q=(q_1,q_2,q_3)$ for its three shape invariants,
+$E=E_n$, and $r_j^2=R_j$. Put $w=(2,2,1)$ in degree six and
+$w=(2,2,2)$ in degree seven, and $L=2+\sum_jw_jr_j$.
+The six rational critical equations are
+\begin{equation}\label{eq:critical-system}
+ r_j^2-R_j=0\quad(1\le j\le3),\qquad
+ \sum_{i=1}^3w_i(\partial_{q_j}R_i-R_i\partial_{q_j}\log E)
+                   \prod_{k\ne i}r_k
+       -2\partial_{q_j}\log E\prod_{k=1}^3r_k=0\quad(1\le j\le3).
+\end{equation}
+For the polynomial system, take the numerator of each rational
+expression after cancellation and clear its rational coefficient
+denominators; nonzero constant rescaling of a row is immaterial.
+The formula
+follows by differentiating $L/\sqrt E$ and multiplying by
+$2\prod r_j$. The displayed pivot and amplitude inequalities ensure that
+denominator clearing neither loses nor creates a solution near our point.
+The degree-six polynomial degrees are $(3,4,6,9,7,6)$.
+For degree seven the quotient degrees are $(4,8,9,15,11,11)$.
+
+For the actual uniqueness checks use the degree-six invariant system and
+the degree-seven \emph{unquotiented} $t,r$ system, respectively. The latter
+is obtained from the same derivative formula, or explicitly by
+\begin{equation}\label{eq:unquotient-gradient}
+ r_i^2-|P_i(t)|^2=0,\quad
+ \sum_i2\{(1+t_j^2)\partial_{t_j}|P_i|^2-4t_j|P_i|^2\}
+          \prod_{k\ne i}r_k-8t_j\prod_kr_k=0.
+\end{equation}
+Its degrees are $(4,8,12,13,13,13)$. Fermat's theorem applies because
+all real parameters in either chart give feasible normalized polynomials,
+the certified global point lies in an open chart, and the amplitudes are
+positive. It is therefore a zero of the corresponding six equations.
+
+Here are complete rational centers for the new boxes $X_n$.
+Divide each integer in the table by $10^{12}$ and give every coordinate
+the independent radius $10^{-8}$.
+\begin{center}\small
+\begin{tabular}{c|r|c|r}
+\toprule Degree-six coordinate&Center numerator&Degree-seven coordinate&Center numerator\\\midrule
+$B$&1056172182060&$t_1$&-601204356501\\
+$C$&364768629645&$t_2$&402231155999\\
+$U$&422209449649&$t_3$&583017398799\\
+$r_1$&1048247168018&$r_1$&1245629502750\\
+$r_2$&1476040180978&$r_2$&1515105139677\\
+$r_3$&1965146944067&$r_3$&1647133669279\\\bottomrule
+\end{tabular}
+\end{center}
+If $F_n$ is the six-equation polynomial map and $c_n$ this exact center,
+define the preconditioner \emph{without any additional numerical data} by
+$J_n=DF_n(c_n)^{-1}$ over $\Q$. The verifier checks this inverse exists,
+and proves
+\begin{equation}\label{eq:printed-box-bounds}
+ \|J_nF_n(c_n)\|_\infty<5\cdot10^{-13},\qquad
+ \sup_{x\in X_n}\|I-J_nDF_n(x)\|_\infty<
+ \begin{cases}6\cdot10^{-6},&n=6,\\15\cdot10^{-6},&n=7.\end{cases}
+\end{equation}
+Since $5\cdot10^{-13}+15\cdot10^{-6}\cdot10^{-8}<10^{-8}$,
+$x\mapsto x-J_nF_n(x)$ maps $X_n$ strictly into itself and contracts it.
+Thus $X_n$ contains exactly one critical point. Indeed the contraction
+has a fixed point, $J_n$ is nonsingular, and two zeros of $F_n$ would
+be two fixed points of the same contraction. The exact global root,
+mapped by \eqref{eq:inverse6} or the peeling formulas, lies strictly
+inside $X_n$; this is an independently checked interval inclusion.
+
+\section{Univariate identification and minimality}\label{sec:minimal}
+\subsection{Exact rational-univariate witnesses}
+The RUR witnesses have the following fully specified roles:
+\begin{center}\small
+\begin{tabular}{c|ccc}
+\toprule &$n=6$&$n=7$\\\midrule
+Parameter $T$&$S_6^2$&$S_7$\\
+Parameter polynomial $H(T)$&$H_6$, degree $186$&$h_7$, degree $855$\\
+Coordinate order&$B,C,U,r_1,r_2,r_3$&$B,C,D,r_1,r_2,r_3$\\
+Coordinate formula&$N_j(T)/(d_jH'(T))$&$N_j(T)/(d_jH'(T))$\\\bottomrule
+\end{tabular}
+\end{center}
+Here $N_j\in\Z[T]$ and $d_j$ are positive integers. These auxiliary
+numerator arrays belong to the machine-readable proof witness; their
+mathematical meaning and every condition for accepting them are given
+here. They do not constitute additional unspecified extremal quantities.
+The two witnesses are \texttt{target6\_rur\_exact.json} and
+\texttt{S7\_value\_RUR\_EXACT.json}.
+In each case the verifier checks primitivity, degree, $\gcd(H,H')=1$,
+the equality of the common denominator to $H'$, and the following seven
+identities over $\Z[T]$: the six critical equations
+\eqref{eq:critical-system}, and the target equation
+\begin{align}\label{eq:target-equations}
+ 4B(2+2r_1+2r_2+r_3)^2
+       -T(B+4)^2(1+U)^2(B+C^2)&=0&& (n=6),\nonumber\\
+ T(1+B)(B+C^2)(B+D^2)-B^2(1+r_1+r_2+r_3)&=0&& (n=7).
+\end{align}
+The first represents a squared value; the second represents the value
+itself, with the positive signs fixed by \eqref{eq:energy-target7}.
+
+\begin{lemma}[Integer acceptance of a proposed RUR]\label{lem:RUR}
+Let $H\in\Z[T]$ be squarefree and let the proposed coordinates be
+$N_j/(d_jH')$. Suppose all required denominators are nonzero at a real
+root $\alpha$ of $H$. If every defining equation and target equation,
+after denominator clearing, is divisible by $H$ in $\Z[T]$, the
+coordinates evaluated at $\alpha$ satisfy those equations exactly.
+\end{lemma}
+\begin{proof}
+Take a common denominator $D=\operatorname{lcm}(d_j)H'$ and rescale the
+numerators. For a polynomial equation $F$ of total degree $d$ the
+homogenized numerator is
+\[
+ \widehat F(T)=D(T)^dF\bigl(N_1(T)/D(T),\ldots,N_6(T)/D(T),T\bigr).
+\]
+Treating the parameter as the coordinate $TD/D$ gives the same formula
+uniformly. The checked integer identity
+$\widehat F=H Q_F$, $Q_F\in\Z[T]$, makes $\widehat F(\alpha)=0$.
+Divide by $D(\alpha)^d\ne0$.
+\end{proof}
+
+\paragraph{Efficient exact verification.}
+An expression circuit carries a pair $(U,d)$ representing
+$D^d f(N/D)$. Addition first raises its operands to the same denominator
+degree; multiplication multiplies numerators and adds degrees; integer
+powers act accordingly. Common subexpressions are evaluated once and
+released after their final use. The verifier accepts divisibility only
+after constructing a quotient $Q_F$ and checking the \emph{integer}
+product $H Q_F=\widehat F$. A quotient proposed by arithmetic modulo a
+large prime power is merely a speed improvement; incorrect proposals are
+rejected by the exact multiplication. No modulus-size heuristic replaces
+that final identity. For $S_7$ the largest homogeneous degree is $15$,
+giving a numerator degree $12810$. The seven checks are processed
+sequentially to control memory.
+
+\subsection{Unique univariate roots and selection of the real branch}\label{sec:rootidentify}
+For a real polynomial $p$ and $I=(c-r,c+r)$, opposite endpoint signs
+and $0\notin p'([c-r,c+r])$ prove existence and uniqueness of a simple
+root by the intermediate value theorem and strict monotonicity.
+A convenient sufficient rational test, for
+$p(c+y)=\sum b_jy^j$ and $r>0$, is
+\begin{equation}\label{eq:Taylor-root-test}
+ p(c-r)p(c+r)<0,\qquad
+ |b_1|>\sum_{j=2}^{\deg p}j|b_j|r^{j-1}
+\end{equation}
+Under these inequalities, $(c-r,c+r)$ contains exactly one simple
+root: the second inequality keeps the derivative of one sign, and
+the first gives existence. All endpoint signs and derivative bounds are checked
+either as rational inequalities or with outward Arb balls.
+For $h_6$ this test is checked entirely in rational arithmetic on $I_6$.
+For $h_7$ the opposite endpoint signs and exclusion of zero from
+the derivative interval are checked directly on $I_7$ after a rigorously
+rounded Taylor shift, at precision exceeding the coefficient height
+plus $4(856)+512$ bits.
+The derivative signs on the stated intervals are also recorded by the
+verifier. This establishes uniqueness in the \emph{printed rational
+intervals}, rather than merely in an unreported smaller neighborhood.
+
+For branch evaluation we refine the unique parameter root by interval
+Newton on the Taylor-shifted polynomial. Degree six starts with
+$(a^2,b^2)$, where $(a,b)=I_6$, and checks the same unique-root
+criterion for $H_6$ on that explicit squared interval. Degree seven
+starts with $I_7$. Thus no unreported starting interval or numerical
+approximation is needed. Refinement is used to evaluate the RUR reliably.
+The verifier proves that $H'(T)$ and all chart pivots are separated from
+zero and all $r_j$ are positive.
+
+\begin{proposition}[Identification with the unrestricted global optimum]\label{prop:bridge}
+The RUR branch selected in the preceding paragraph has target
+$T=S_6^2$ for degree six and $T=S_7$ for degree seven.
+\end{proposition}
+\begin{proof}
+The phase certificates give the unrestricted global extrema $C_n=S_n$.
+Their reciprocal representatives map into the explicit boxes $X_n$ of
+Section~\ref{sec:criticalboxes}, and are stationary because the normalized
+rational charts give feasible polynomials for every nearby real parameter.
+For degree six the RUR gives $(B,C,U,r_1,r_2,r_3)$ directly. For degree
+seven use $t_1=-\sqrt B$, $t_2=C/t_1$, $t_3=D/t_1$; the nonzero Jacobian
+in \eqref{eq:quotient7} and the chain rule convert its exact quotient
+critical equations to \eqref{eq:unquotient-gradient}.
+
+Strict interval evaluation places this second critical point inside the
+same $X_n$. Its uniqueness proved in \eqref{eq:printed-box-bounds}
+identifies the two points exactly. Finally \eqref{eq:target-equations},
+the energy formulas and positivity of the amplitudes give $T=C_6^2$
+or $T=C_7$. These steps use the global cover, critical-point uniqueness,
+and exact RUR identities separately; matching decimal expansions alone
+would not identify the algebraic number.
+\end{proof}
+
+\subsection{Irreducibility and the exact degrees}\label{sec:irreducibility}
+For $h_5$, reduction modulo $7$ and multiplication by its leading
+coefficient inverse gives
+\[
+ \bar h_5=X^4+X^3+3X^2+2X+4\quad\hbox{in }\mathbb F_7[X].
+\]
+The exact Frobenius checks
+$X^{7^4}=X\pmod{\bar h_5}$ and
+$\gcd(X^{7^2}-X,\bar h_5)=1$
+prove irreducibility. For completeness, the latter remainder is
+$3X^3+3X^2+X+6$; its gcd with $\bar h_5$ is one.
+Gauss's lemma proves the degree-four assertion in Theorem~\ref{thm:main}.
+
+We recall the degree-intersection argument used for the larger polynomials.
+For a primitive degree-$d$ integer polynomial $h$ and a prime preserving
+its degree with squarefree reduction, every rational factor degree is
+a subset sum of the degrees of the irreducible factors modulo that prime.
+Indeed Gauss's lemma gives integer factors, and preservation of the
+product's leading coefficient preserves both factor degrees modulo the
+prime. Intersecting these possible-degree sets over several primes can
+therefore prove irreducibility without finding a single irreducible
+reduction. Each modular factor is independently checked: for a monic
+factor $g$ of degree $e$, check
+\begin{equation}\label{eq:Rabin}
+ X^{p^e}=X\pmod g,\qquad
+ \gcd(X^{p^{e/q}}-X,g)=1\quad(q\text{ prime},\ q\mid e).
+\end{equation}
+The criterion follows because the roots of $X^{p^k}-X$ are exactly the
+elements of $\mathbb F_{p^k}$, and an irreducible polynomial of degree
+$f$ divides it exactly when $f\mid k$. The proper divisors of $e$ are
+all divisors of at least one $e/q$. The verifier also checks primehood
+of every displayed prime, squarefreeness, and the complete factor product.
+
+For $H_6$ the verified modular degree patterns are
+\begin{center}\small
+\begin{tabular}{rl}
+\toprule Prime&Irreducible factor degrees of $H_6$\\\midrule
+1000033&$1,5,6,7,67,100$\\
+1000037&$3,21,21,46,95$\\
+1000039&$1,1,3,3,6,12,160$\\\bottomrule
+\end{tabular}
+\end{center}
+Their subset-sum intersection is exactly $\{0,186\}$. Hence $H_6$ is
+irreducible. Let $\alpha$ be its selected positive root. The rational
+field norm is $N_{\Q(\alpha)/\Q}(\alpha)=H_6(0)/\operatorname{lc}(H_6)$.
+Its $5$-adic valuation is $-75$, as checked by integer division of those
+two coefficients. It is therefore not a rational square. If $\alpha$
+were a square in $\Q(\alpha)$, its norm would be a rational square.
+Consequently
+\[
+ [\Q(\sqrt\alpha):\Q(\alpha)]=2,
+ \qquad[\Q(\sqrt\alpha):\Q]=372.
+\]
+Thus $H_6(X^2)$, of degree $372$, is irreducible. By
+Proposition~\ref{prop:bridge}, $\sqrt\alpha=S_6>0$, proving
+Theorem~\ref{thm:main6} with the root test on $I_6$.
+
+For $h_7$ the verified patterns are
+\begin{center}\small
+\begin{tabular}{rl}
+\toprule Prime&Irreducible factor degrees of $h_7$\\\midrule
+1000033&$1,1,21,38,150,278,366$\\
+1000037&$1,1,8,25,51,769$\\
+1000039&$1,5,112,228,509$\\
+1000081&$5,116,145,589$\\\bottomrule
+\end{tabular}
+\end{center}
+Their subset-sum intersection is $\{0,855\}$. Thus $h_7$ is irreducible;
+its largest coefficient has $2641$ bits. Proposition~\ref{prop:bridge}
+and the root test on $I_7$ prove Theorem~\ref{thm:main7}.
+These arguments also complete the minimal-polynomial part of
+Theorem~\ref{thm:main}; its feasibility and global upper bound were proved
+in Section~\ref{sec:five}.
+
+\section{Structural consequences and a reusable proof procedure}\label{sec:structure}
+\subsection{The square does not lower the degree for \texorpdfstring{$S_7$}{S7}}
+\begin{corollary}\label{cor:odd-square}
+One has $\Q(S_7)=\Q(S_7^2)$. Write
+$h_7(X)=A(X^2)+XB(X^2)$. Then
+\[
+ g(Y)=\operatorname{prim}\{YB(Y)^2-A(Y)^2\}
+\]
+is the degree-$855$ integer minimal polynomial of $S_7^2$, and
+$S_7=-A(S_7^2)/B(S_7^2)$.
+\end{corollary}
+\begin{proof}
+The degree of $\Q(S_7)$ over $\Q(S_7^2)$ is at most two and divides
+the odd integer $855$, so it is one. The odd degree of $h_7$ makes $B$ nonzero. Since
+$[\Q(S_7^2):\Q]=855$ and $\deg B<855$, one has
+$B(S_7^2)\ne0$. The displayed relation gives the rational recovery.
+The polynomial annihilator has degree $855$, so field degree proves
+its minimality. The verifier additionally checks
+$h_7(X)h_7(-X)=-g_0(X^2)$ for the unnormalized expression
+$g_0(Y)=YB(Y)^2-A(Y)^2$, including its coefficient normalization.
+\end{proof}
+
+\subsection{The normal closure of the degree-seven value}
+\begin{corollary}\label{cor:galois}
+The splitting-field Galois group of $h_7$ over $\Q$ is
+$\mathfrak S_{855}$. Thus $S_7$ is not expressible by radicals over
+$\Q$, the root field $\Q(S_7)$ has no proper intermediate fields over
+$\Q$, and its normal closure has degree $855!$.
+\end{corollary}
+\begin{proof}
+Irreducibility gives a transitive Galois group on $855$ roots.
+The squarefree factorization at $1000037$ gives a Frobenius permutation
+of cycle type $(1,1,8,25,51,769)$. Its $10200$th power is a single
+$769$-cycle fixing $86$ points, since $769$ is prime and coprime to
+$10200=\operatorname{lcm}(8,25,51)$. A nontrivial block system has both
+its number of blocks and their sizes at most $855/2<769$. An element of
+prime order $769$ would then act trivially on the blocks and within each
+block, a contradiction. The group is primitive. Jordan's prime-cycle
+theorem \cite[Theorem~1.1]{Jones2014} gives
+$\mathfrak A_{855}\subseteq G$. The original permutation is odd, so
+$G=\mathfrak S_{855}$. The symmetric group is not solvable, giving the
+radicals assertion. A root stabilizer is $\mathfrak S_{854}$, a maximal
+subgroup of $\mathfrak S_{855}$; Galois correspondence gives the
+intermediate-field assertion. The splitting field has degree $|G|=855!$.
+\end{proof}
+
+\subsection{What is reusable, and what requires new mathematics}
+\begin{theorem}[Local identification without complete elimination]\label{thm:local-identification}
+Suppose a separate global argument gives an extremizer $P_*$ and a local
+chart whose critical coordinate $x_*$ lies in a rational convex box $X$.
+Assume its critical polynomial map $F$ is injective on $X$. Let $H$
+be a primitive irreducible integer polynomial with positive leading
+coefficient and exactly one root
+$\alpha$ in a rational interval $I$. Suppose a proposed rational
+coordinate map $R(T)$ satisfies $F(R(T))=0$ and
+$T=V(R(T))$, where $V$ is the desired target function, by
+the integer acceptance test of Lemma~\ref{lem:RUR}, and interval
+evaluation proves $R(\alpha)\in X$ with all denominators nonzero.
+Then the target value at $P_*$ equals $\alpha$. In particular $H$ is
+its integer minimal polynomial. No description of the other components
+of the complex critical variety is needed.
+\end{theorem}
+\begin{proof}
+The integer identities give $F(R(\alpha))=0$, while stationarity gives
+$F(x_*)=0$. Injectivity identifies the two points in $X$. The exact
+target equation identifies their target values, and irreducibility
+gives minimality. If the target is a squared value, the nonsquare-norm
+test used for $S_6$ supplies the additional degree-two extension.
+\end{proof}
+
+The reusable verifier consists of four interfaces: an unrestricted global
+certificate, an explicit local rational chart with checked nonzero pivots,
+an exact RUR satisfying all integer identities, and a real uniqueness box
+containing both the global point and the RUR branch. A target polynomial
+and an irreducibility witness complete the output. Taking a sign quotient
+before elimination reduces the system while preserving the local branch;
+homogeneous integer circuits make verification substantially less expensive
+than rediscovering a lexicographic elimination basis.
+
+\begin{lemma}[Target recovery from traces]\label{lem:traces}
+Let $A$ be a finite reduced algebra over a perfect field $k$ of dimension $d$,
+and suppose $T\in A$ separates its $d$ geometric points. For
+$m_j=\operatorname{Tr}(M_T^j)$, the least linear recurrence of
+$(m_j)_{j\ge0}$ has order $d$ and characteristic polynomial equal to
+the minimal polynomial of $T$. It is determined by $m_0,\ldots,m_{2d-1}$.
+\end{lemma}
+\begin{proof}
+Over an algebraic closure, $A$ is the product of $d$ copies of the field
+and $M_T$ has distinct eigenvalues $\alpha_1,\ldots,\alpha_d$.
+Thus $m_j=\sum_i\alpha_i^j$. The $d$ by $d$ Hankel matrix
+$(m_{i+j})_{0\le i,j<d}$ is $V^TV$, where $V$ is the Vandermonde
+matrix on the distinct $\alpha_i$; its determinant is nonzero. The
+coefficients of the monic recurrence of order $d$ are therefore uniquely
+obtained from the $d$ equations with indices $0,\ldots,d-1$.
+The product $\prod_i(X-\alpha_i)$ satisfies them. The nonzero Hankel
+determinant rules out a smaller recurrence, proving the assertion.
+\end{proof}
+
+An effective discovery route uses arithmetic modulo successive good primes.
+On a finite reduced component, traces of powers of multiplication by a
+separating target determine a linear recurrence for its powers; its minimal
+polynomial is recovered from that recurrence. Chinese remaindering and
+rational reconstruction propose characteristic-zero coefficients, followed
+by Newton lifting of the coordinate RUR. These are discovery procedures:
+no claimed stabilization, generic component degree, or probabilistic
+reconstruction is evidence until Lemma~\ref{lem:RUR}, the real bridge,
+and irreducibility have been checked.
+
+\begin{proposition}[Conditional finite verification search]\label{prop:termination}
+Fix $n$ and a feasible algebraic candidate $C$. Suppose a prescribed
+compact set $\mathcal M$ of candidate phase points is covered by finitely
+many effective locally sharp neighborhoods, and $L_n(b)<C$ outside
+$\mathcal M$. A fair search through rational positive Toeplitz
+majorants and finite rational phase-box covers eventually certifies
+$S_n=C$.
+\end{proposition}
+\begin{proof}
+At $b\notin\mathcal M$, the exact complex dual gives a majorant with
+diagonal below $C^2$. Add a sufficiently small positive scalar matrix
+and approximate its entries rationally: strict positivity and the strict
+diagonal bound persist. They continue to hold on a neighborhood of $b$.
+Together with the local sharp neighborhoods these open sets cover the
+compact phase torus. A sufficiently fine finite box cover is subordinate
+to a finite subcover; all strict inequalities terminate at finite outward
+precision. Fair enumeration eventually reaches such a finite witness.
+\end{proof}
+Strict separation outside $\mathcal M$ is a hypothesis of this
+conditional statement; it has not been established for an unknown degree.
+The abstract criterion does not require full contact or symmetric
+extremizers. The general algebraicity and strict-growth theorems hold
+without these hypotheses, whereas efficient exact closure in a new
+degree requires further structural information or a different global
+certificate.
+
+
+\appendix
+
+
+\section{Complete rational stationary boxes}\label{app:rootboxes}
+
+For $n=6,7$, the six ordered groups are those in
+\eqref{eq:variableorder}.  Each displayed integer is divided by $10^{15}$;
+each coordinate is independently restricted to the closed interval of
+radius $10^{-12}$ about that rational center.  Thus this appendix,
+together with the rational equations \eqref{eq:stationarysystem}, defines
+$P_n^*$ and the intermediate values $C_n$ \emph{exactly}; no decimal values are used in their definition.
+Each verifier checks the existence and uniqueness of the root, including
+its positivity and contact nondegeneracy, with outward integer intervals.
+
+\subsection*{Degree six: 37 coordinates}
+\begin{verbatim}
+x:
+  262107422046759, 274753362877041, -56834182227533 ,
+  21931482111926, 200254489084666, 192750050669383 ,
+  -97448045755226
+y:
+  382683747964617, 514612479312783, -331021320804505 ,
+  195797927412915, -243319088997319
+u:
+  975367953712551, 197013293293456, -814439100551040 ,
+  -943144476618461, -197013293293456, 741528708673153
+v:
+  220584121982048, 980400817148612, 580249042647735 ,
+  -332383056463608, -980400817148612, -670921138594936
+lambda:
+  433120892734887, 310501280533748, 433120892734887 ,
+  325904972998054, 534010330647529, 325904972998054
+rho:
+  262107422046759, 274753362877041, 386881086673566 ,
+  515079599452430, 386881086673566, 274753362877041 ,
+  262107422046759
+\end{verbatim}
+\subsection*{Degree seven: 43 coordinates}
+\begin{verbatim}
+x:
+  235920876276069, 293870003804017, 236641874895934 ,
+  388564195563446, -96883585759302, -19530465759307 ,
+  -284748638818354, 226824433433431
+y:
+  -267894573672937, -4749259739664, 376322016831812 ,
+  -356910969941934, 72648412418080, 64879397812180
+u:
+  780369667645909, -358685493593095, -914405693017847 ,
+  -918268518904145, -261135887151378, 593409122120395 ,
+  993774896189023
+v:
+  625318464318953, 933458470788003, 404798997746474 ,
+  -395958239199021, -965302050366445, -804900996262461 ,
+  -111406713013609
+lambda:
+  364962313977169, 364962313977169, 354670796377332 ,
+  390267013871127, 331857813315176, 390267013871127 ,
+  354670796377332
+rho:
+  235920876276069, 293870003804017, 357444932203085 ,
+  388593218600046, 388593218600046, 357444932203085 ,
+  293870003804017, 235920876276069
+\end{verbatim}
+
+
+\section{Rational matrices for the moving-atom certificates}\label{app:matrices}
+All entries of $A,B,L,W$ below are the displayed integers divided by $10^8$.
+The contact rows are in the order of Appendix~\ref{app:rootboxes}; the
+internal phase columns are $1,\ldots,n-1$. Thus these arrays, the stationary
+boxes, and formulas \eqref{eq:atomS}--\eqref{eq:atom-radius} specify all
+small locally sharp matrices without relying on a numerical optimizer.
+The normalized center phase is computed from the candidate coefficients
+using $b_k=\bar a_k/|a_k|$ and the endpoint gauge.
+\begingroup\scriptsize
+\subsection*{Degree 6}
+\[
+ A=10^{-8}\left(\begin{array}{rrrrr}
+-14890744&-10643183&10527552&430039&7265783\\
+8032646&7028881&-1731438&2596755&-7365074\\
+-7430126&-10677968&-4325848&-9269467&15001693\\
+13193678&36775846&-7224118&5874034&15161723\\
+-7284904&-27793980&989159&7050311&17510364\\
+828684&629274&3790850&-10548300&-41409359
+\end{array}\right).
+\]
+\[
+ B=10^{-8}\left(\begin{array}{rrrrr}
+71907201&94764809&-18713451&16091082&44903955\\
+0&72850058&2977426&12459542&27992069\\
+0&0&35688982&9762342&-6075938\\
+0&0&0&46124378&64205450\\
+0&0&0&0&129478077
+\end{array}\right).
+\]
+\[
+ L=10^{-8}\left(\begin{array}{rrrrr}
+-22294792&18920044&46526017&-25458834&11736207\\
+40067266&-14185195&-3574022&-42663677&10786177\\
+37456900&-11829466&26079253&39216871&-4374547\\
+-23362184&6269030&-16019440&17186319&-5659321\\
+-6181973&-5697849&-34293857&-9172402&-5770265\\
+-25685217&6523436&-18717951&20891723&-6718251
+\end{array}\right).
+\]
+\[
+ W=10^{-8}\left(\begin{array}{rrrrrr}
+117169743&805182&2077663&-1643164&-706629&-19934344\\
+5025575&-31126564&23613388&10488322&14397646&4817360\\
+-5146156&-12064513&-22326302&-27169639&10844357&4426359\\
+0&0&6232805&0&-30931398&8499186\\
+5146156&12064513&-22326302&27169639&10844357&4426359\\
+-5025575&31126564&23613388&-10488322&14397646&4817360\\
+-117169743&-805182&2077663&1643164&-706629&-19934344
+\end{array}\right).
+\]
+\subsection*{Degree 7}
+\[
+ A=10^{-8}\left(\begin{array}{rrrrrr}
+-9444419&-1659413&5149452&-15278593&6765714&36534907\\
+-12797789&-22954099&6848662&1688835&19457058&25205002\\
+17094407&18382667&14276317&-3035961&-25548582&-13109865\\
+-422333&5224977&-11510711&-1743947&-16980425&14091864\\
+11159133&4887015&-6533311&4263583&2286339&-5553008\\
+-13202917&-1745721&392253&13677309&15553000&-6060643\\
+1900218&-8673863&-1790713&-6552626&3156487&-39190360
+\end{array}\right).
+\]
+\[
+ B=10^{-8}\left(\begin{array}{rrrrrr}
+65381905&63215613&24838007&-2331180&-129568710&-81806523\\
+0&61218102&35016321&2957669&-84069385&-124386129\\
+0&0&71134781&19563617&-27915195&-75725631\\
+0&0&0&61050283&64229603&63811655\\
+0&0&0&0&82452000&144523872\\
+0&0&0&0&0&179420222
+\end{array}\right).
+\]
+\[
+ L=10^{-8}\left(\begin{array}{rrrrrr}
+6351281&1605841&37379964&-21944470&9116688&10642255\\
+-6726643&32104528&-11781454&26406732&-4109303&-4019270\\
+19825778&-27910010&10620929&12276733&-14079378&-3962551\\
+-40288952&-7910120&-17863047&-18337565&-25834166&-11535375\\
+-13194733&32649882&19642480&-4684989&26973448&-8614817\\
+32276071&-4139460&-28141687&-30147003&22379803&3086215\\
+1757198&-26400661&-9857185&36430562&-14447092&14403543
+\end{array}\right).
+\]
+\[
+ W=10^{-8}\left(\begin{array}{rrrrrrr}
+60496914&5336249&-1302144&4740863&1572240&249130&19894126\\
+5978239&-25052266&-22030264&-3873332&18093299&-8427224&-4596516\\
+-1321300&-19226778&16013454&19565782&-11042330&-14970233&-3845304\\
+-13634960&14555414&2720863&17440436&15978924&19992030&-5064878\\
+13634960&-14555414&2720863&-17440436&-15978924&19992030&-5064878\\
+1321300&19226778&16013454&-19565782&11042330&-14970233&-3845304\\
+-5978239&25052266&-22030264&3873332&-18093299&-8427224&-4596516\\
+-60496914&-5336249&-1302144&-4740863&-1572240&249130&19894126
+\end{array}\right).
+\]
+\endgroup
+
+
+\section{The independent finite verifier}\label{app:certificate}
+
+The independent degree-five global program is \cert{}. It is distributed beside this \LaTeX{} source and runs with the command
+\begin{center}\texttt{python3 Sidon5\_Exact\_Closure\_Certificate\_Revised.py}\end{center}
+without a solver, third-party libraries, network access, or prior computed files. Assertions are part of the verification, so Python must not be run with \texttt{-O}. All real intervals are represented by two signed arbitrary-precision integers $[L,U]$ corresponding to $[L/10^{50},U/10^{50}]$. Addition, subtraction, multiplication, positive division, square, and nonnegative square root round their endpoints outward; the last operation uses the integer square root. Complex intervals are pairs of real intervals.
+
+The analytic inputs passed to the verifier are precisely these:
+\begin{enumerate}[leftmargin=*]
+\item Arithmetic in $\Q[w]/(16w^4+10w^3-8w+1)$ proves \eqref{eq:Lambda-polynomial}, \eqref{eq:autocorr}, $P_*(1)=1$, the sign pattern, $T_*p=\Lambda s$, and $T_*q=0$. Rational root isolation bounds the associated algebraic coefficients.
+\item Real $LDL^T$ tests verify $N^TN\succ0$, the gap \eqref{eq:base-identities}, invertibility of $\mathcal B$ and $FF^T$, and the positive quadratic matrix \eqref{eq:first-checked}. The code constructs the minimizer and the polarization tensors from \eqref{eq:A1-min}--\eqref{eq:A3}, then verifies \eqref{eq:first-checked}, \eqref{eq:S2-bound}, \eqref{eq:K3-bound}, and \eqref{eq:local-radius}, using rational intervals.
+\item The program reconstructs $\pi$ from $\pi=16\arctan(1/5)-4\arctan(1/239)$ with alternating Taylor bounds (50 terms for each arctangent), and roots of unity by repeated half-angle square roots and complex multiplication. The identity for $\pi$ follows from the tangent addition formula and the fact that $0<4\arctan(1/5)-\arctan(1/239)<\pi/2$ has tangent one. Thus every trigonometric enclosure is rigorous.
+\item The global payload is decoded from base85 and zlib and checked against the displayed SHA-256 digest. A depth-first traversal of each of the 262660 initial orbit representatives reads exactly one tag per node and, for Toeplitz leaves, ten signed 64-bit integers representing five complex moments. At the end the byte stream must be exhausted and all expected counts must match. Every Fourier, local and Toeplitz leaf is independently rechecked against the corresponding strict inequality. Toeplitz positive definiteness is proved by interval complex $LDL^*$, requiring the lower endpoint of each pivot to be positive.
+\end{enumerate}
+
+For avoidance of ambiguity, the recursion implemented in the file has the following mathematical pseudocode. All tests are \emph{strict} comparisons of enclosing intervals; failure at any assertion invalidates the certificate.
+\begin{quote}\small\ttfamily
+VERIFY-BOX(level, t):\\
+\hspace*{1em}read next tag; reject missing or invalid tag\\
+\hspace*{1em}if tag = FOURIER:\\
+\hspace*{2em}compute interval enclosure of DFT mass at center\\
+\hspace*{2em}assert upper(mass) < lower(L0 cos(h[level]))\\
+\hspace*{1em}else if tag = LOCAL:\\
+\hspace*{2em}assert a ten-center ball contains the complete box\\
+\hspace*{1em}else if tag = TOEPLITZ:\\
+\hspace*{2em}read ten integers; construct the six-by-six Hermitian\\
+\hspace*{2em}Toeplitz matrix with diagonal (L0 cos(h[level])) squared\\
+\hspace*{2em}assert every interval LDL-star pivot of T-R(center) is positive\\
+\hspace*{1em}else if tag = SPLIT:\\
+\hspace*{2em}for all 16 sign vectors with entries -1 or +1:\\
+\hspace*{3em}VERIFY-BOX(level+1, exact-child(level,t,sign))\\
+\hspace*{1em}else: reject\\[2pt]
+FOR each lexicographic initial orbit representative t:\\
+\hspace*{1em}VERIFY-BOX(0,t)\\
+assert all bytes consumed, node counts and layer counts exact.
+\end{quote}
+
+For a Hermitian matrix $A$, the interval $LDL^*$ recurrence uses
+\[
+ d_j=A_{jj}-\sum_{k<j}|L_{jk}|^2d_k,\qquad
+ L_{ij}=\frac{A_{ij}-\sum_{k<j}L_{ik}\overline{L_{jk}}d_k}{d_j},
+\]
+where each positive divisor has a strictly positive certified lower bound. By induction, the true pivots are contained in the computed intervals. Six positive pivots certify $A\succ0$, with no floating-point eigenvalue approximation. The minimum reported pivot is an $LDL^*$ pivot lower bound, not a uniform lower bound for all minimum eigenvalues.
+
+The payload is compressed solely for file size: decoding is deterministic, and the verifier does not accept its recorded labels or moments without recomputing all associated inequalities. In particular, the digest authenticates one dataset but is not itself a proof of the mathematical bounds. The proof obligation is jointly discharged by the arguments of Sections~\ref{sec:Toeplitz} and~\ref{sec:five} and the full execution of the independent verifier.
+
+
+
+
+\section{Complete certificate interface and pseudocode}\label{app:driver}
+The archive \texttt{Exact\_Sidon\_5\_to\_7\_Proof\_Certificates.zip}
+contains exactly the proof data needed for the three closures and the
+stated structural corollaries. From its extracted directory run
+\begin{verbatim}
+python3 -m pip install -r requirements.txt
+python3 verify_all.py
+\end{verbatim}
+Use Python 3.10 or later, and do not use \texttt{-O}: assertions are
+proof predicates. The pinned algebraic dependencies are
+\texttt{python-flint==0.9.0} and \texttt{sympy==1.14.0}.
+The verifier makes no network calls. Dependency installation is a setup
+step, not a mathematical premise. Separate options
+\texttt{--part global} and \texttt{--part algebraic} rerun just those
+layers; the algebraic-only mode does not assert that it has rerun the
+complete global cover.
+
+\begin{center}\small
+\begin{tabular}{p{.46\linewidth}p{.46\linewidth}}
+\toprule Proof component&Executable or data interface\\\midrule
+$S_5$ feasibility, sharp local matrices and full phase cover&
+\texttt{Sidon5\_Exact\_Closure\_\allowbreak Certificate\_Revised.py}\\
+$S_6,S_7$ unrestricted stationary roots, local atoms, covers and reversal&
+\texttt{Sidon6\_7\_Exact\_Closure\_Certificate.py}\\
+New six-variable boxes and global-to-chart bridge&
+\texttt{critical\_bridge.py}, \texttt{critical\_boxes.json}\\
+$S_6$ RUR, degree $372$, interval and norm obstruction&
+\texttt{verify\_s6\_algebraic.py}, \texttt{target6\_rur\_exact.json}\\
+$S_7$ RUR, degree $855$, interval and modular sieve&
+\texttt{certify\_s7\_value\_rur.py}, \texttt{S7\_value\_RUR\_EXACT.json}\\
+Characteristic-zero divisibility identities&
+\texttt{integer\_circuit\_verify.py}\\
+Primitivity, exact root tests and finite-field factor checks&
+\texttt{exact\_values.py}, \texttt{irreducibility.py}\\
+Long polynomial displays, checked against both RURs&
+\texttt{S6\_S7\_Minimal\_Polynomials.txt}\\\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{The complete global step}
+The following pseudocode specifies the recursion for degrees six and
+seven; Appendix~\ref{app:certificate} gives the specialized degree-five
+format. All comparisons refer to lower and upper endpoints of verified
+enclosures. Coverage includes the boundaries of adjacent cells.
+\begin{Verbatim}
+VERIFY_GLOBAL(n):
+    certify the stationary root and its Cartesian rational box;
+    prove positive weights, positive amplitudes, distinct contacts;
+    check the positive constant in the complementary identity;
+    reconstruct A,B,L,W and all local Taylor--Schur bounds;
+    check the normalized reversal root returns to its uniqueness box;
+    for every canonical initial phase-orbit representative:
+        VERIFY_NODE(initial_box);
+    assert complete data exhaustion and exact traversal statistics.
+
+VERIFY_NODE(box):
+    read and validate the next tag;
+    if tag is DFT or INTERPOLATION:
+        rebuild the roots of unity and the interpolation weights;
+        assert upper(center_bound) < lower(aligned_threshold);
+    else if tag is TOEPLITZ:
+        rebuild the rational Toeplitz matrix;
+        assert every enclosing LDL-star pivot has positive lower end;
+        assert diagonal <= aligned_threshold squared;
+    else if tag is LOCAL:
+        assert the entire box lies in a proved local ellipsoid;
+    else if tag is BRANCH:
+        construct all 2**(n-1) exact children;
+        VERIFY_NODE(child) for every child, in the specified order;
+    else: reject.
+\end{Verbatim}
+The global source root need not have full contact merely because it is
+stationary; this property is verified for the designated candidate only.
+Arbitrary competitors are excluded by the full phase cover and are not
+restricted to a full-contact or palindromic stratum.
+
+\begin{samepage}
+\subsection{The algebraic step and the final identification}
+\begin{Verbatim}
+VERIFY_ALGEBRAIC(n):
+    reconstruct the exact rational critical equations from the chart;
+    read H and the six rational coordinate numerators N_j/(d_j H');
+    assert characteristic zero, primitive H, degree and denominator;
+    prove that the printed value interval has exactly one root;
+    verify every modular factor by Frobenius powers and gcd tests;
+    intersect all possible rational factor-degree sets;
+    if n == 6: prove the nonsquare field norm and degree doubling;
+    for each of the six critical equations and the target equation:
+        form the denominator-cleared integer circuit numerator U;
+        propose Q; assert the exact integer identity H*Q == U;
+    check the symbolic chart identities and inverse pivot conditions;
+    verify the printed critical box by exact-center preconditioning;
+    map the unrestricted global root into that box;
+    refine the unique real parameter root by interval Newton;
+    evaluate every RUR coordinate with outward rounding;
+    assert nonzero denominators and the positive amplitude branch;
+    map that point into the same critical box;
+    deduce equality of points by uniqueness and apply the target equation;
+    compare every coefficient and interval in the polynomial TXT;
+    accept the algebraic layer.
+
+VERIFY_ALL():
+    VERIFY_GLOBAL(5); VERIFY_GLOBAL(6); VERIFY_GLOBAL(7);
+    check h_5 is primitive and irreducible modulo 7;
+    VERIFY_ALGEBRAIC(6); VERIFY_ALGEBRAIC(7);
+    verify the odd-degree square and Galois-group corollaries;
+    accept all three complete exact closures.
+\end{Verbatim}
+\end{samepage}
+The actual global program for degrees six and seven shares its root and
+matrix infrastructure and runs both covers in one invocation. The
+integer circuits are verified one at a time; parallel evaluation of the
+largest degree-seven numerators would unnecessarily multiply memory use.
+
+The standalone source files, full global payloads, RUR arrays, modular
+factors and reproducibility logs are distributed together. Compressed
+payloads and SHA-256 manifests detect accidental changes; mathematical
+acceptance is always by the reconstructed predicates above. The trusted
+arithmetic consists of arbitrary-precision integers and rationals,
+FLINT polynomial arithmetic, and outward-rounded Arb enclosures.
+This is a computer-assisted proof with explicit finite obligations;
+we do not claim a proof-assistant formalization of the three closures.
+
+Theorem~\ref{thm:monotonicity} requires no execution of this archive:
+its complete proof is Lemma~\ref{lem:FR}, Lemma~\ref{lem:degree-raise}
+and the subsequent extremizer argument.
+
+
+\begin{thebibliography}{99}
+\bibitem{BachRudi2023}
+F.~Bach and A.~Rudi, Exponential convergence of sum-of-squares hierarchies
+for trigonometric polynomials, \emph{SIAM J. Optim.} \textbf{33} (2023),
+no.~3, 2137--2159.
+\href{https://doi.org/10.1137/22M1540818}{doi:10.1137/22M1540818}.
+
+\bibitem{DritschelRovnyak}
+M.~A.~Dritschel and J.~Rovnyak, The operator Fej\'er--Riesz theorem,
+in \emph{A Glimpse at Hilbert Space Operators}, Operator Theory: Advances
+and Applications, vol.~207, Birkh\"auser, 2010, pp.~223--254;
+\href{https://arxiv.org/abs/0903.3639}{arXiv:0903.3639}.
+
+\bibitem{Haah2019}
+J.~Haah, Product decomposition of periodic functions in quantum signal
+processing, \emph{Quantum} \textbf{3} (2019), 190.
+\href{https://doi.org/10.22331/q-2019-10-07-190}{doi:10.22331/q-2019-10-07-190}.
+
+\bibitem{Johansson2017}
+F.~Johansson, Arb: efficient arbitrary-precision midpoint-radius interval
+arithmetic, \emph{IEEE Trans. Comput.} \textbf{66} (2017), no.~8, 1281--1292.
+\href{https://doi.org/10.1109/TC.2017.2690633}{doi:10.1109/TC.2017.2690633}.
+
+\bibitem{Jones2014}
+G.~A.~Jones, Primitive permutation groups containing a cycle,
+\emph{Bull. Aust. Math. Soc.} \textbf{89} (2014), no.~1, 159--165;
+\href{https://arxiv.org/abs/1209.5169}{arXiv:1209.5169}, Theorem~1.1
+(Jordan's prime-cycle theorem).
+
+\bibitem{Neuwirth2026}
+S.~Neuwirth, On the (Fourier analytic) Sidon constant of $\{0,1,2,3\}$,
+lecture manuscript dated 26 August 2013, uploaded 30 March 2026;
+\href{https://arxiv.org/abs/2603.28229}{arXiv:2603.28229}.
+
+\bibitem{Rabin1980}
+M.~O.~Rabin, Probabilistic algorithms in finite fields,
+\emph{SIAM J. Comput.} \textbf{9} (1980), no.~2, 273--280.
+\href{https://doi.org/10.1137/0209024}{doi:10.1137/0209024}.
+
+\bibitem{Rouillier1999}
+F.~Rouillier, Solving zero-dimensional systems through the rational
+univariate representation, \emph{Appl. Algebra Engrg. Comm. Comput.}
+\textbf{9} (1999), no.~5, 433--461.
+\href{https://doi.org/10.1007/s002000050114}{doi:10.1007/s002000050114}.
+
+\bibitem{Yu2026}
+H.~Yu, Deepseek and Claude Code, The exact Sidon constant of
+$\{0,1,2,3\}$ and its formalization, preprint, 3 June 2026;
+\href{https://ai.vixra.org/pdf/2606.0009v1.pdf}{viXra:2606.0009v1}.
+\end{thebibliography}
+
+
+\end{document}

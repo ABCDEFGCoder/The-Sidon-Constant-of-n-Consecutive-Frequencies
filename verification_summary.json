@@ -1,0 +1,55 @@
+{
+  "revision": "24 October 2026",
+  "scope": "Exact closures for S5, S6 and S7; strict monotonicity proved analytically in the manuscript",
+  "full_components_rechecked": {
+    "S5_global": {
+      "accepted": true,
+      "nodes": 272852
+    },
+    "S6_S7_global": {
+      "accepted": true,
+      "nodes6": 25560,
+      "nodes7": 458256,
+      "seconds": 607.769
+    },
+    "S6_algebraic": {
+      "accepted": true,
+      "integer_identities": 7,
+      "degree": 372,
+      "parameter_degree": 186,
+      "parameter_start_interval": "squares of the printed I6 endpoints; refined by rigorous interval Newton"
+    },
+    "S7_algebraic": {
+      "accepted": true,
+      "integer_identities": 7,
+      "degree": 855,
+      "seconds": 990.8412795410004,
+      "largest_numerator_degree": 12810
+    },
+    "updated_interfaces": {
+      "accepted": true,
+      "printed_critical_boxes_and_real_bridges": true,
+      "polynomial_text_and_intervals": true,
+      "modular_irreducibility_and_structural_corollaries": true
+    }
+  },
+  "recheck_provenance": "The full global scripts and heavy integer-circuit verification kernels are byte-for-byte unchanged from the checked sources. Updated chart interfaces, symbolic identities, input conventions, denominator assertions and real branches were independently rechecked after curation. No cached pass flag bypasses the default verifier.",
+  "full_default_command": "python3 verify_all.py",
+  "minimal_polynomial_degrees": {
+    "5": 4,
+    "6": 372,
+    "7": 855
+  },
+  "arithmetic_dependencies": {
+    "python-flint": "0.9.0",
+    "sympy": "1.14.0"
+  },
+  "body_only_adversarial_review": {
+    "date": "24 October 2026",
+    "certificates_rerun": false,
+    "programs_and_algebraic_witnesses_changed": false,
+    "revised_paper_pages": 38,
+    "report": "paper/Sidon_5_to_7_Body_Audit.txt",
+    "diff": "paper/Body_Audit_Changes.diff"
+  }
+}
